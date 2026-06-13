@@ -46,9 +46,12 @@ export const mailto = (subject) =>
 /** YouTube/TikTok/etc. search URLs for the brand. */
 const ytSearch = (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 
+/** Official WanderCraft Discord invite. Also used by the Fan Art "Upload Art" CTA. */
+export const DISCORD_INVITE = 'https://discord.gg/uuhZ2YMf';
+
 /** Brand-level community links. Replace with real URLs when available. */
 export const COMMUNITY_LINKS = {
-  discord: mailto('WanderCraft — Discord invite request'),
+  discord: DISCORD_INVITE,
   twitter: 'https://twitter.com/search?q=wandercraft',
   youtube: ytSearch('WanderCraft creator collective'),
 };
@@ -59,7 +62,3 @@ export const STORE_LINKS = {
   fullStore: 'https://shopwandercraft.com',
 };
 
-/** Fan-art upload target. Until a backend exists, this is a mailto. */
-export const UPLOAD_LINKS = {
-  fanArt: mailto('WanderCraft Fan Art Submission'),
-};

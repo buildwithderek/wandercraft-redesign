@@ -1,13 +1,13 @@
 /**
- * Fan-art gallery: render + filter against an in-memory state, plus
- * the upload CTA which opens the contact modal.
+ * Fan-art gallery: render + filter against an in-memory state.
+ *
+ * The "Upload Art" CTA is a plain link to the WanderCraft Discord (see
+ * index.html), so there's no JS to wire for it here.
  */
 
 import { FAN_ART_ITEMS, FAN_ART_FILTERS } from '../data/fanart.js';
 import { fanArtItemHTML } from '../components/fanartItem.js';
 import { observeNewElements } from './scrollReveal.js';
-import { openContactInfo } from '../components/modal.js';
-import { UPLOAD_LINKS, CONTACT_EMAIL } from '../data/links.js';
 
 const state = { filter: 'all' };
 
@@ -17,7 +17,6 @@ export function initFanArtGallery() {
 
   renderFilterBar();
   render(grid);
-  bindUploadButton();
 }
 
 export function applyFanArtFilter(items, filter) {
@@ -57,20 +56,5 @@ function renderFilterBar() {
     });
     const grid = document.getElementById('fanartGrid');
     if (grid) render(grid);
-  });
-}
-
-function bindUploadButton() {
-  const btn = document.querySelector('.fanart-upload .btn');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    openContactInfo({
-      title: 'Share Your Creation',
-      lead: `We'd love to feature your artwork, pixel art, screenshots, or builds.
-             Send a few images and a short description — include your handle
-             and which creator(s) inspired the piece.`,
-      mailtoHref: UPLOAD_LINKS.fanArt,
-      primaryLabel: `Email playwandercraft@gmail.com`,
-    });
   });
 }

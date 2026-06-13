@@ -12,7 +12,7 @@ export function initFooter() {
 
   connectColumn.innerHTML = `
     <h4>Connect</h4>
-    <a href="${COMMUNITY_LINKS.discord}">Discord</a>
+    <a href="${COMMUNITY_LINKS.discord}" target="_blank" rel="noopener noreferrer">Discord</a>
     <a href="${COMMUNITY_LINKS.twitter}" target="_blank" rel="noopener noreferrer">Twitter</a>
     <a href="${COMMUNITY_LINKS.youtube}" target="_blank" rel="noopener noreferrer">YouTube</a>
     <a href="${mailto('WanderCraft — hello')}">Contact</a>
