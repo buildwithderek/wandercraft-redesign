@@ -1062,6 +1062,10 @@ img {
 }
 
 .merch-card {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -1078,12 +1082,8 @@ img {
 .merch-image {
   position: relative;
   aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(120% 80% at 50% 115%, rgba(41, 171, 226, 0.08), transparent 60%),
-    var(--bg-raised);
+  overflow: hidden;
+  background: var(--bg-raised);
 }
 
 .merch-badge {
@@ -1102,124 +1102,56 @@ img {
 .merch-badge.featured { background: rgba(247, 148, 29, 0.16);  color: var(--sunset); }
 .merch-badge.eco      { background: rgba(91, 200, 50, 0.16);  color: var(--accent); }
 
-/* --- Voxel mannequin (pure CSS, blocky on purpose) --- */
+/* --- Real product photo (hotlinked from the Fourthwall store) --- */
 
-.voxel-mannequin {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+.merch-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   transition: transform var(--t-med);
 }
 
-.merch-card:hover .voxel-mannequin {
-  transform: translateY(-6px);
-}
-
-.mannequin-body {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Tee: head block + torso + sleeves via box-shadow. */
-.mannequin-body.tee,
-.mannequin-body.hoodie {
-  width: 96px;
-  height: 104px;
-  background: var(--tee-color, #1B4965);
-  border-radius: 8px;
-  box-shadow:
-    -26px 6px 0 -6px var(--tee-color, #1B4965),
-     26px 6px 0 -6px var(--tee-color, #1B4965);
-}
-
-.mannequin-body.tee::before,
-.mannequin-body.hoodie::before {
-  content: '';
-  position: absolute;
-  top: -54px;
-  width: 48px;
-  height: 48px;
-  background: #d9b88f;
-  border-radius: 8px;
-}
-
-/* Hoodie: hood arc rising behind the head. */
-.mannequin-body.hoodie::after {
-  content: '';
-  position: absolute;
-  top: -62px;
-  width: 64px;
-  height: 30px;
-  background: var(--tee-color, #2F6F4F);
-  border-radius: 12px 12px 0 0;
-}
-
-/* Cap: a big head wearing a brimmed cap. */
-.mannequin-body.cap {
-  width: 84px;
-  height: 84px;
-  background: #d9b88f;
-  border-radius: 10px;
-  margin-top: 40px;
-}
-
-.mannequin-body.cap::before {
-  content: '';
-  position: absolute;
-  top: -26px;
-  width: 92px;
-  height: 34px;
-  background: var(--tee-color, #FF8C42);
-  border-radius: 10px 10px 4px 4px;
-}
-
-.mannequin-body.cap::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: -26px;
-  width: 36px;
-  height: 10px;
-  background: var(--tee-color, #FF8C42);
-  border-radius: 6px;
-}
-
-.tee-design {
-  position: relative;
-  z-index: 1;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.cap-logo {
-  position: absolute;
-  top: -18px;
-  width: 18px;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 3px;
+.merch-card:hover .merch-photo {
+  transform: scale(1.06);
 }
 
 .merch-info {
-  padding: 20px;
+  flex: 1;
+  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   align-items: flex-start;
 }
 
-.merch-info h3 {
-  font-size: 1.02rem;
+.merch-category {
+  font-size: 0.7rem;
   font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
 }
 
-.merch-creator {
-  font-size: 0.82rem;
-  color: var(--text-3);
+.merch-name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.3;
+  /* Clamp to two lines so cards in a row keep a consistent height. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.merch-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .merch-price {
@@ -1227,7 +1159,22 @@ img {
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--gold);
-  margin: 8px 0 12px;
+}
+
+.merch-shop {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-2);
+  white-space: nowrap;
+}
+
+.merch-shop span {
+  display: inline-block;
+  transition: transform var(--t-fast);
+}
+
+.merch-card:hover .merch-shop span {
+  transform: translateX(4px);
 }
 
 .merch-fourthwall {

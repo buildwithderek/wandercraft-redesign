@@ -1,8 +1,8 @@
 /**
- * One merch card. The Shop Now CTA is wired in modules/merch.js to either:
- *   - jump straight to the real Fourthwall product URL when present, or
- *   - open the contact modal pre-filled with the product name (today's path,
- *     since the store isn't live yet).
+ * One merch card. The whole card is an anchor to the live product page on
+ * shopwandercraft.com (opens in a new tab), so there's no JS click handling —
+ * it's a real link. The "Shop Now" pill is a styled span, not a nested anchor
+ * (nesting <a> inside <a> is invalid HTML).
  */
 
 export function merchCardHTML(item) {
@@ -11,24 +11,21 @@ export function merchCardHTML(item) {
     : '';
 
   return `
-    <div class="merch-card" data-id="${item.id}">
+    <a class="merch-card" href="${item.url}" target="_blank" rel="noopener noreferrer"
+       data-id="${item.id}" aria-label="${item.name} — ${item.price}, shop on WanderCraft store">
       <div class="merch-image">
-        <div class="voxel-mannequin">
-          <div class="mannequin-body ${item.style}" style="--tee-color: ${item.teeColor}">
-            ${item.design ? `<div class="tee-design">${item.design}</div>` : ''}
-            ${item.style === 'cap' ? `<div class="tee-design cap-logo"></div>` : ''}
-          </div>
-        </div>
+        <img class="merch-photo" src="${item.image}" alt="${item.name}"
+             loading="lazy" referrerpolicy="no-referrer">
         ${badgeMarkup}
       </div>
       <div class="merch-info">
-        <h3>${item.name}</h3>
-        <p class="merch-creator">${item.collection}</p>
-        <p class="merch-price">${item.price}</p>
-        <button class="btn btn-small btn-primary"
-                data-shop-product="${item.name}"
-                aria-label="Shop ${item.name}">Shop Now</button>
+        <p class="merch-category">${item.category}</p>
+        <h3 class="merch-name">${item.name}</h3>
+        <div class="merch-footer">
+          <span class="merch-price">${item.price}</span>
+          <span class="merch-shop">Shop Now <span aria-hidden="true">→</span></span>
+        </div>
       </div>
-    </div>
+    </a>
   `;
 }

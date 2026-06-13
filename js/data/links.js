@@ -53,12 +53,10 @@ export const COMMUNITY_LINKS = {
   youtube: ytSearch('WanderCraft creator collective'),
 };
 
-/** Store and merch. Fourthwall is the planned host. */
+/** Store and merch. Live Fourthwall storefront at shopwandercraft.com. */
 export const STORE_LINKS = {
-  /** Full Fourthwall storefront — falls back to mailto until live. */
-  fullStore: mailto('WanderCraft — full store inquiry'),
-  /** Per-product fallback. Used by every "Shop Now" CTA on a merch card. */
-  shopProduct: (productName) => mailto(`WanderCraft Merch — interested in: ${productName}`),
+  /** Full storefront home. */
+  fullStore: 'https://shopwandercraft.com',
 };
 
 /** Fan-art upload target. Until a backend exists, this is a mailto. */

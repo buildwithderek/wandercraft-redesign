@@ -133,24 +133,41 @@ describe('fanArtItemHTML', () => {
 });
 
 describe('merchCardHTML', () => {
-  test('renders the Shop Now button with the product name in data-shop-product', () => {
-    const merch = { id: 'tee', name: 'Explorer Tee', collection: 'Original', price: '$34.99', style: 'tee', teeColor: '#1B4965', design: 'W', badge: null };
-    const frag = parse(merchCardHTML(merch));
-    const btn = frag.querySelector('button[data-shop-product]');
-    expect(btn).toBeTruthy();
-    expect(btn.dataset.shopProduct).toBe('Explorer Tee');
-    expect(btn.getAttribute('aria-label')).toBe('Shop Explorer Tee');
+  const base = {
+    id: 'tee',
+    name: 'Explorer Tee',
+    category: 'T-Shirt',
+    price: '$34.99',
+    image: 'https://cdn.example.com/tee.jpg',
+    url: 'https://shopwandercraft.com/products/explorer-tee',
+    badge: null,
+  };
+
+  test('the whole card is a link to the live product page', () => {
+    const frag = parse(merchCardHTML(base));
+    const card = frag.querySelector('a.merch-card');
+    expect(card).toBeTruthy();
+    expect(card.getAttribute('href')).toBe('https://shopwandercraft.com/products/explorer-tee');
+    expect(card.getAttribute('target')).toBe('_blank');
+    expect(card.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
+  test('renders the product photo, name, category, and price', () => {
+    const frag = parse(merchCardHTML(base));
+    expect(frag.querySelector('.merch-photo').getAttribute('src')).toBe('https://cdn.example.com/tee.jpg');
+    expect(frag.querySelector('.merch-photo').getAttribute('alt')).toBe('Explorer Tee');
+    expect(frag.querySelector('.merch-name').textContent).toBe('Explorer Tee');
+    expect(frag.querySelector('.merch-category').textContent).toBe('T-Shirt');
+    expect(frag.querySelector('.merch-price').textContent).toBe('$34.99');
   });
 
   test('omits the badge when item.badge is null', () => {
-    const merch = { id: 'tee', name: 'Tee', collection: 'X', price: '$1', style: 'tee', teeColor: '#000', design: 'W', badge: null };
-    const frag = parse(merchCardHTML(merch));
+    const frag = parse(merchCardHTML(base));
     expect(frag.querySelector('.merch-badge')).toBeFalsy();
   });
 
   test('renders the badge with its variant class when present', () => {
-    const merch = { id: 'tee', name: 'Tee', collection: 'X', price: '$1', style: 'tee', teeColor: '#000', design: 'W', badge: { label: 'New', variant: 'new' } };
-    const frag = parse(merchCardHTML(merch));
+    const frag = parse(merchCardHTML({ ...base, badge: { label: 'New', variant: 'new' } }));
     const badge = frag.querySelector('.merch-badge');
     expect(badge).toBeTruthy();
     expect(badge.classList.contains('new')).toBe(true);
