@@ -5,13 +5,16 @@
  * highlight the active link as the user scrolls.
  */
 
+// In-page sections in document order — drives the scroll-spy active highlight.
+// "Applications" isn't here: it's an external link (the Google Form), not a
+// section to scroll-spy on.
 export const NAV_LINKS = [
   { id: 'home', label: 'Home' },
-  {id: 'about', label: 'About' },
   { id: 'creators', label: 'Creators' },
   { id: 'content', label: 'Content' },
   { id: 'merch', label: 'Merch' },
-  { id: 'fanart', label: 'Fan Art' }
+  { id: 'fanart', label: 'Fan Art' },
+  { id: 'about', label: 'About' },
 ];
 
 /** Footer column groups. Each link is either an in-page anchor or an external href. */
