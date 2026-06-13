@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who are the Wanderers?</title>
+  <meta name="description" content="Dreamers, adventurers, and world builders — the three pillars of the WanderCraft community.">
+  <meta name="theme-color" content="#081120">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <a class="skip-link" href="#wanderers">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="nav scrolled" id="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="WanderCraft home">
+        <img class="logo-icon" src="assets/logo/wandercraft.png" alt="" aria-hidden="true">
+        <span>WanderCraft</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html#home"     class="nav-link">Home</a>
+        <a href="index.html#creators" class="nav-link">Creators</a>
+        <a href="index.html#content"  class="nav-link">Content</a>
+        <a href="index.html#merch"    class="nav-link">Merch</a>
+        <a href="index.html#fanart"   class="nav-link">Fan Art</a>
+        <a href="index.html#about"    class="nav-link">About</a>
+        <a href="wanderers.html" class="nav-link active">Wanderers</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Ambient floating particles (skipped under prefers-reduced-motion) -->
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <main>
+  <section class="section pillars-section" id="wanderers" aria-labelledby="wanderers-title">
+    <div class="page-hero">
+      <h1 class="page-hero-title" id="wanderers-title">Who are the Wanderers?</h1>
+      <p class="page-hero-subtitle">The three pillars of WanderCraft: Dreamers, Adventurers, and World Builders.</p>
+    </div>
+
+    <div class="pillars-grid">
+      <article class="pillar pillar--dreamers">
+        <h2>Dreamers</h2>
+        <p class="pillar-lead">Every great adventure begins with a dream.</p>
+        <p>Being a dreamer is the heart of WanderCraft. Wanderers imagine what could be, set ambitious goals, and take the steps toward turning ideas into reality. Whether it's building a massive project, creating content, or pursuing a lifelong passion, Wanderers aren't afraid to dream big. We encourage one another to become the best versions of ourselves and build the lives we've always imagined.</p>
+      </article>
+
+      <article class="pillar pillar--adventurers">
+        <h2>Adventurers</h2>
+        <p class="pillar-lead">The journey is just as important as the destination.</p>
+        <p>Wanderers embrace adventure wherever it can be found. In-game, they explore new worlds, take on challenges, and create unforgettable stories. Beyond the screen, they embrace real-life adventures, stay active, and make the most of every opportunity to experience something new.</p>
+        <p>Wanderers believe that exploring the real world is just as important as exploring virtual ones. The experiences we gain in the real world inspire the worlds we build in-game, and the creativity we develop in-game encourages us to dream bigger in real life. The best adventures happen both in-game and in life, and every journey helps shape who we become.</p>
+      </article>
+
+      <article class="pillar pillar--builders">
+        <h2>World Builders</h2>
+        <p class="pillar-lead">Leave every world better than you found it.</p>
+        <p>Wanderers recognize that the places we explore, both virtual and real, are worth caring for. We believe in conservation and respecting the communities and environments around us. From preserving the beauty of our planet to fostering a welcoming and supportive community, Wanderers take responsibility for the world they help build and inspire others to do the same.</p>
+        <p>We understand that even small actions can create lasting change, and that protecting what we love today helps ensure future generations can enjoy it tomorrow.</p>
+      </article>
+    </div>
+
+    <div class="pillars-cta">
+      <a href="index.html#creators" class="btn btn-primary">Meet the Wanderers</a>
+      <a href="index.html" class="btn btn-outline">Back Home</a>
+    </div>
+  </section>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img class="logo-icon logo-icon--footer" src="assets/logo/wandercraft.png" alt="" aria-hidden="true">
+          <span>WanderCraft</span>
+        </div>
+        <p>Adventures Everywhere.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <a href="index.html#home">Home</a>
+          <a href="index.html#creators">Creators</a>
+          <a href="index.html#content">Content</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <a href="index.html#fanart">Fan Art</a>
+          <a href="index.html#merch">Merch</a>
+          <a href="index.html#about">About</a>
+        </div>
+        <!-- Populated by js/modules/footer.js so external URLs stay in data/links.js -->
+        <div class="footer-col" data-col="connect">
+          <h4>Connect</h4>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 WanderCraft. All rights reserved.</p>
+      <p class="footer-contact">Built with blocks and passion.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

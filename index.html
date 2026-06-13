@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WanderCraft — Adventures Everywhere</title>
+  <meta name="description" content="WanderCraft is a creator collective of adventurers, builders, and storytellers. Explore content, meet creators, and join the community.">
+  <meta name="theme-color" content="#081120">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <a class="skip-link" href="#home">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav" aria-label="Primary">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo" aria-label="WanderCraft home">
+        <img class="logo-icon" src="assets/logo/wandercraft.png" alt="" aria-hidden="true">
+        <span>WanderCraft</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#home"     class="nav-link active">Home</a>
+        <a href="#creators" class="nav-link">Creators</a>
+        <a href="#content"  class="nav-link">Content</a>
+        <a href="#merch"    class="nav-link">Merch</a>
+        <a href="#fanart"   class="nav-link">Fan Art</a>
+        <a href="#about"    class="nav-link">About</a>
+        <a href="wanderers.html" class="nav-link">Wanderers</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Ambient floating particles (skipped under prefers-reduced-motion) -->
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <main>
+  <!-- ==================== HOME ==================== -->
+  <section class="hero" id="home">
+    <div class="hero-aurora" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <p class="hero-badge">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
+        Season 3 — now wandering
+      </p>
+      <img src="/assets/logo/wandercraft-banner.png">
+
+      <p class="hero-subtitle">
+        A collective of adventurers, builders, and storytellers exploring
+        the world — one block at a time.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="#creators" class="btn btn-primary">Meet the Creators</a>
+        <a href="#content"  class="btn btn-secondary">Watch Adventures</a>
+      </div>
+
+      <dl class="hero-stats">
+        <div class="hero-stat">
+          <dt>Creators</dt>
+          <dd>16</dd>
+        </div>
+        <div class="hero-stat">
+          <dt>Continents</dt>
+          <dd>6</dd>
+        </div>
+        <div class="hero-stat">
+          <dt>To ocean causes</dt>
+          <dd>$1K+</dd>
+        </div>
+      </dl>
+    </div>
+
+    <a class="scroll-indicator" href="#creators" aria-label="Scroll to creators">
+      <span class="scroll-line" aria-hidden="true"></span>
+      <span>Scroll to explore</span>
+    </a>
+  </section>
+
+  <!-- ==================== CREATORS ==================== -->
+  <section class="section creators-section" id="creators" aria-labelledby="creators-title">
+    <div class="section-header">
+      <h2 class="section-title" id="creators-title">Meet the Creators</h2>
+      <p class="section-desc">Adventurers, builders, and storytellers from every corner of the globe.</p>
+    </div>
+
+    <!-- Cards rendered by js/modules/creators.js from js/data/creators.js -->
+    <div class="creators-grid"></div>
+  </section>
+
+  <!-- ==================== CONTENT ==================== -->
+  <section class="section content-section" id="content" aria-labelledby="content-title">
+    <div class="section-header">
+      <h2 class="section-title" id="content-title">Content Dashboard</h2>
+      <p class="section-desc">The latest from our creators — videos, streams, and behind the scenes.</p>
+    </div>
+
+    <div class="content-toolbar">
+      <!-- Filter buttons rendered by js/modules/contentDashboard.js -->
+      <div class="content-filters" aria-label="Filter content by type"></div>
+
+      <div class="content-sort">
+        <label for="contentSort">Sort by</label>
+        <select id="contentSort"></select>
+      </div>
+    </div>
+
+    <!-- Cards rendered by js/modules/contentDashboard.js -->
+    <div class="content-grid" id="contentGrid"></div>
+
+    <div class="load-more-wrap">
+      <button class="btn btn-outline load-more" id="loadMore" type="button">Load More</button>
+    </div>
+  </section>
+
+  <!-- ==================== MERCH ==================== -->
+  <section class="section merch-section" id="merch" aria-labelledby="merch-title">
+    <div class="section-header">
+      <h2 class="section-title" id="merch-title">WanderCraft Merch</h2>
+      <p class="section-desc">Adventure-ready gear designed by our creators. Every purchase supports ocean conservation.</p>
+    </div>
+
+    <!-- Cards rendered by js/modules/merch.js -->
+    <div class="merch-grid"></div>
+
+    <div class="merch-fourthwall">
+      <div class="merch-fourthwall-copy">
+        <p>Full store powered by <span class="fourthwall-logo">Fourthwall</span></p>
+      </div>
+      <button type="button" class="btn btn-primary">Visit Full Store</button>
+    </div>
+  </section>
+
+  <!-- ==================== FAN ART ==================== -->
+  <section class="section fanart-section" id="fanart" aria-labelledby="fanart-title">
+    <div class="section-header">
+      <h2 class="section-title" id="fanart-title">Fan Art Gallery</h2>
+      <p class="section-desc">Artwork, pixel art, builds, and animations from the WanderCraft community.</p>
+    </div>
+
+    <!-- Filter buttons rendered by js/modules/fanartGallery.js -->
+    <div class="fanart-filters" aria-label="Filter fan art by type"></div>
+
+    <!-- Tiles rendered by js/modules/fanartGallery.js -->
+    <div class="fanart-masonry" id="fanartGrid"></div>
+
+    <div class="fanart-upload">
+      <div class="upload-box">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <h3>Share Your Creation</h3>
+        <p>Upload your artwork, pixel art, screenshots, or builds — we feature community work every season.</p>
+        <button type="button" class="btn btn-primary">Upload Art</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ABOUT ==================== -->
+  <section class="section about-section" id="about" aria-labelledby="about-title">
+    <div class="section-header">
+      <h2 class="section-title" id="about-title">About WanderCraft</h2>
+    </div>
+
+    <div class="about-content">
+      <div class="about-text">
+        <p class="about-lead">WanderCraft is a community of dreamers, adventurers, and world builders all united by a shared belief… <em>Life is meant to be explored, created, and lived with purpose.</em> We chase ambitious goals, embrace new experiences both in-game and in the real world, and strive to leave every place we touch better than we found it. No matter where your journey began, there's a place for you among the Wanderers.</p>
+        <a href="wanderers.html" class="btn btn-secondary">Who are the Wanderers?</a>
+      </div>
+
+      <div class="about-globe">
+        <canvas id="miniGlobe" aria-label="Decorative 3D globe" role="img"></canvas>
+        <p class="about-globe-label">Creators across 6 continents</p>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img class="logo-icon logo-icon--footer" src="assets/logo/wandercraft.png" alt="" aria-hidden="true">
+          <span>WanderCraft</span>
+        </div>
+        <p>Adventures Everywhere.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <a href="#home">Home</a>
+          <a href="#creators">Creators</a>
+          <a href="#content">Content</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <a href="#fanart">Fan Art</a>
+          <a href="#merch">Merch</a>
+          <a href="#about">About</a>
+        </div>
+        <!-- Populated by js/modules/footer.js so external URLs stay in data/links.js -->
+        <div class="footer-col" data-col="connect">
+          <h4>Connect</h4>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 WanderCraft. All rights reserved.</p>
+      <p class="footer-contact">Built with blocks and passion.</p>
+    </div>
+  </footer>
+
+  <!--
+    Three.js is loaded as a CDN global. Our own code is an ES module, which
+    requires being served over http(s), not file://. Run `npm run serve` or
+    any static dev server.
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

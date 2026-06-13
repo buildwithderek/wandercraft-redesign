@@ -1,0 +1,14 @@
+# Cloudflare Workers deploy config for the YouTube RSS aggregator.
+# `wrangler deploy` reads this file from the working directory.
+
+name = "wandercraft-youtube-feed"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# No bindings needed. The Worker is entirely stateless — Cloudflare's
+# edge cache handles repeated requests for us. If you ever want to add
+# durable caching, attach a KV namespace here.
+
+# Workers free tier:  100,000 requests / day  (plenty for a creator site)
+# This Worker hits 16 RSS feeds × ~1 per page load × edge-cached for 10
+# minutes, so most visitors hit cache and never trigger an upstream fetch.

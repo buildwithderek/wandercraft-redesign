@@ -1,0 +1,60 @@
+# =====================================================================
+#  Wandercraft — YouTube feed regenerator
+# =====================================================================
+#
+#  Runs `node scripts/build-youtube-feed.mjs`, which fetches the public
+#  RSS feed for every creator with a youtubeChannelId in js/data/creators.js,
+#  merges the entries, sorts by publish date, and writes the result to
+#  data/videos.json.
+#
+#  Schedule:  every hour, on the hour (cron uses UTC).
+#  Trigger:   also runs on-demand from the Actions tab via workflow_dispatch.
+#
+#  What ships if anything changed:
+#  The job stages data/videos.json and pushes a single commit. If nothing
+#  changed (no new uploads from any creator), it exits without committing.
+#
+# =====================================================================
+
+name: Refresh YouTube feed
+
+on:
+  schedule:
+    # Every hour at minute 0 (UTC). Use https://crontab.guru/ to pick a
+    # different cadence — e.g. '*/30 * * * *' for every 30 minutes.
+    - cron: '0 * * * *'
+  workflow_dispatch:   # adds a "Run workflow" button on the Actions tab
+
+# The default GITHUB_TOKEN needs write access to push the commit.
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate data/videos.json
+        run: node scripts/build-youtube-feed.mjs
+
+      - name: Commit if changed
+        # The `git diff --quiet` exits non-zero when there are changes,
+        # so we invert the check with `||`. If unchanged → noop.
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet -- data/videos.json; then
+            echo 'No changes — nothing to commit.'
+          else
+            git add data/videos.json
+            git commit -m 'chore(videos): refresh YouTube feed'
+            git push
+          fi
