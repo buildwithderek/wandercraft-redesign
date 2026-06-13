@@ -16,8 +16,11 @@ import { observeNewElements } from './scrollReveal.js';
 /** Only the first N items render — keeps the gallery a curated showcase. */
 const TOP_N = 4;
 
-/** localStorage key holding the map of { [itemId]: true } the visitor has liked. */
-const LIKES_KEY = 'wc:fanart:liked';
+/**
+ * localStorage key holding the map of { [itemId]: true } the visitor has liked.
+ * Bump the version suffix to wipe everyone's likes back to zero on next load.
+ */
+const LIKES_KEY = 'wc:fanart:liked:v2';
 
 export function initFanArtGallery() {
   const grid = document.getElementById('fanartGrid');
