@@ -42,7 +42,7 @@ export const CREATORS = [
   { id: 'xkurosaki',    name: 'xKurosaki',    role: 'CREATIVE WANDERER', mcUsername: 'xKurosaki',    twitchUsername: 'xkurosakiii',  youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'xkurosaki' },
   { id: 'gurbygrey',    name: 'GurbyGrey',    role: 'CREATIVE WANDERER', mcUsername: 'GurbyGrey',    twitchUsername: null,           youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'gurbygrey' },
   { id: 'zuttz',        name: 'zuttz',        role: 'CREATIVE WANDERER', mcUsername: 'zuttz',        twitchUsername: 'zuuttz',       youtubeHandle: 'zuuttz', youtubeChannelId: 'UCMahYnvRPawRRFFMn4HTWdA', tiktokHandle: 'zuuttz' },
-  { id: 'its-k0da',     name: 'its_k0da',     role: 'CREATIVE WANDERER', mcUsername: 'its_k0da',     twitchUsername: 'its_k0da',     youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'its_k0da' },
+  { id: 'its-k0da',     name: 'its_k0da',     role: 'CREATIVE WANDERER', mcUsername: '_kodaaa_',     twitchUsername: 'its_k0da',     youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'its_k0da' },
   { id: 'mossymads',    name: 'MossyMads',    role: 'CREATIVE WANDERER', mcUsername: 'MossyMads',    twitchUsername: 'mossymadsmc',  youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'mossymadsmc' },
   { id: 'maplenate',    name: 'MapleNate',    role: 'CREATIVE WANDERER', mcUsername: 'MapleNate',    twitchUsername: 'maplenateyt',  youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'maplenateyt' },
   { id: 'shashadivine', name: 'shashadivine', role: 'CREATIVE WANDERER', mcUsername: 'shashadivine', twitchUsername: 'shasha_divine', youtubeHandle: null, youtubeChannelId: null, tiktokHandle: 'shashadivine' },
