@@ -20,9 +20,9 @@ name: Refresh YouTube feed
 
 on:
   schedule:
-    # Every hour at minute 0 (UTC). Use https://crontab.guru/ to pick a
-    # different cadence — e.g. '*/30 * * * *' for every 30 minutes.
-    - cron: '0 * * * *'
+    # Once a day at 00:00 UTC. Use https://crontab.guru/ to pick a
+    # different cadence — e.g. '0 */12 * * *' for every 12 hours.
+    - cron: '0 0 * * *'
   workflow_dispatch:   # adds a "Run workflow" button on the Actions tab
 
 # The default GITHUB_TOKEN needs write access to push the commit.
