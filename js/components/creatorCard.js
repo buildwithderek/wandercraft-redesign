@@ -2,8 +2,8 @@
  * One creator card — playwandercraft.com/creators layout.
  *
  * Layout: full-body Minecraft skin render on top, name (H2), role in small
- * caps below, "Read Bio" link at the bottom. A 🔴 LIVE badge appears in the
- * top-right corner when the creator is streaming (driven by liveStatus.js).
+ * caps below. A 🔴 LIVE badge appears in the top-right corner when the
+ * creator is streaming (driven by liveStatus.js).
  *
  * The skin URL is auto-generated from the creator's Minecraft username via
  * starlightskins.lunareclipse.studio. On hover, the image swaps to an
@@ -15,7 +15,6 @@
 import { fullBodySkinUrl, fullBodyFallbackUrl } from '../utils/skinUrls.js';
 import { ROLE_VARIANTS } from '../data/creators.js';
 import {
-  bioUrlFor,
   twitchUrlFor,
   youtubeUrlFor,
   youtubeLiveUrlFor,
@@ -272,7 +271,6 @@ export function creatorCardHTML(creator) {
     width: 600,
   });
   const fallbackUrl = fullBodyFallbackUrl(creator.mcUsername);
-  const bioHref = bioUrlFor(creator.id);
 
   // Build the per-platform pill row. Only platforms with a handle render.
   // Each pill has data-platform + data-live-for so modules/creators.js
@@ -302,10 +300,6 @@ export function creatorCardHTML(creator) {
         <h2 class="creator-v2-name">${creator.name}</h2>
         <p class="creator-v2-role creator-v2-role--${roleVariant}">${creator.role}</p>
       </div>
-
-      <a class="creator-v2-bio" href="${bioHref}" target="_blank" rel="noopener noreferrer">
-        Read Bio
-      </a>
     </article>
   `;
   console.log(emoteSkin)

@@ -59,13 +59,6 @@ describe('creatorCardHTML (playwandercraft layout)', () => {
     expect(frag.querySelector('img').getAttribute('loading')).toBe('lazy');
   });
 
-  test('Read Bio links to playwandercraft.com/{id}-bio', () => {
-    const frag = parse(creatorCardHTML(creator));
-    const bio = frag.querySelector('.creator-v2-bio');
-    expect(bio.getAttribute('href')).toBe('https://www.playwandercraft.com/senseitalon-bio');
-    expect(bio.getAttribute('target')).toBe('_blank');
-  });
-
   test('renders a hidden LIVE badge when twitchUsername is set', () => {
     const frag = parse(creatorCardHTML(creator));
     const badge = frag.querySelector('.creator-v2-live');
