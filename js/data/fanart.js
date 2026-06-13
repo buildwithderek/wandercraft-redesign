@@ -1,42 +1,27 @@
 /**
- * Fan-art gallery items. Renders into a CSS-driven masonry layout.
+ * Fan-art gallery — the top 4 featured pieces.
  *
- * `height` is the visual height of the placeholder tile (px). Once real
- * images replace the placeholders, this can be removed in favor of intrinsic
- * image dimensions.
+ * The gallery renders only the first 4 items here (see modules/fanartGallery.js),
+ * so this is an ordered "featured" list: put the piece you want first, first.
  *
- * `type` must be one of: 'artwork' | 'pixel' | 'builds' | 'screenshots'
- * (see FAN_ART_FILTERS).
+ * Fields:
+ *   id      stable key (also the localStorage key suffix for likes)
+ *   title   shown in the hover overlay
+ *   artist  credited below the title
+ *   type    'artwork' | 'pixel' | 'builds' | 'screenshots'
+ *   likes   starting like count (visitors can +1 from the heart; their like is
+ *           remembered per-browser in localStorage — there's no shared backend)
+ *   height  tile height in px (masonry layout)
+ *   color   placeholder gradient shown until the image loads / if it 404s
+ *   image   path under assets/fanArt/ (capital A)
+ *
+ * NOTE: zuottz_sketch.png and sixty_seven.png are not in the repo yet — drop
+ * those two files into assets/fanArt/ and they'll replace the placeholders.
  */
 
 export const FAN_ART_ITEMS = [
-  // Real fan-art submissions, served from assets/fanArt/ (NB: capital A).
-  // If you remove a file, the colored placeholder shows through — safe to
-  // swap images in/out without breaking the gallery.
-  { id: 'fan-art-1', title: 'Forest Village Scene',        artist: 'ChefDan',  type: 'pixel',   likes: 0, height: 300, color: '#4CAF7D', image: 'assets/fanArt/fan_art1.png' },
-  { id: 'fan-art-2', title: 'SenseiTalon — Awakening',     artist: 'Pavisian', type: 'artwork', likes: 0, height: 360, color: '#8B2D8C', image: 'assets/fanArt/fan_art2.png' },
-  { id: 'fan-art-3', title: 'WanderCraft Chibi Roster',    artist: 'Unknown',  type: 'artwork', likes: 0, height: 280, color: '#A8D5BA', image: 'assets/fanArt/fan_art3.png' },
-  { id: 'fan-art-4', title: 'WanderCraft Season 2 Poster', artist: 'Unknown',  type: 'artwork', likes: 0, height: 240, color: '#1E9FD6', image: 'assets/fanArt/fan_art4.png' },
-
-  // Demo placeholders below — keep, replace with more real art, or delete.
-  { id: 'sunset-mountains', title: 'Sunset Over Voxel Mountains', artist: 'PixelPainter42', type: 'artwork', likes: 2847, height: 280, color: '#FF8C42' },
-  { id: 'atlas-portrait', title: 'AtlasVoyager Fan Portrait', artist: 'CubeArtist', type: 'pixel', likes: 1923, height: 200, color: '#1B4965' },
-  { id: 'ocean-temple', title: 'Ocean Temple Build', artist: 'BuilderMax', type: 'builds', likes: 3401, height: 320, color: '#2F6F4F' },
-  { id: 'northern-lights', title: 'Northern Lights Screenshot', artist: 'WanderFan99', type: 'screenshots', likes: 1204, height: 180, color: '#4CAF7D' },
-  { id: 'logo-pixel', title: 'WanderCraft Logo Pixel Art', artist: 'RetroPixels', type: 'pixel', likes: 4521, height: 240, color: '#FF8C42' },
-  { id: 'underwater-kingdom', title: 'Underwater Kingdom', artist: 'DeepSeaBuilder', type: 'builds', likes: 2156, height: 360, color: '#1B4965' },
-  { id: 'desert-oasis', title: 'Desert Oasis Painting', artist: 'ArtByNature', type: 'artwork', likes: 1876, height: 260, color: '#D9C3A5' },
-  { id: 'mountain-panorama', title: 'Mountain Base Panorama', artist: 'SummitFan', type: 'screenshots', likes: 987, height: 190, color: '#2F6F4F' },
-  { id: 'character-lineup', title: 'Voxel Character Lineup', artist: 'CubeArtist', type: 'pixel', likes: 3102, height: 220, color: '#4CAF7D' },
-  { id: 'forest-treehouse', title: 'Forest Canopy Treehouse', artist: 'TreeBuilder', type: 'builds', likes: 2789, height: 300, color: '#2F6F4F' },
-  { id: 'reef-fanart', title: 'Reef Runner Fan Art', artist: 'OceanPainter', type: 'artwork', likes: 1543, height: 250, color: '#1B4965' },
-  { id: 'volcanic-base', title: 'Volcanic Island Base', artist: 'LavaKing', type: 'builds', likes: 3890, height: 340, color: '#FF8C42' },
-];
-
-export const FAN_ART_FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'artwork', label: 'Artwork' },
-  { value: 'pixel', label: 'Pixel Art' },
-  { value: 'builds', label: 'Builds' },
-  { value: 'screenshots', label: 'Screenshots' },
+  { id: 'sensei-talon',       title: 'SenseiTalon — Awakening',   artist: 'Pavisian', type: 'artwork',     likes: 24, height: 320, color: '#8B2D8C', image: 'assets/fanArt/fan_art3.png' },
+  { id: 'wandercraft-roster', title: 'WanderCraft Roster',        artist: 'Community', type: 'artwork',    likes: 31, height: 300, color: '#A8D5BA', image: 'assets/fanArt/fan_art2.png' },
+  { id: 'zuottz-sketch',      title: 'zuottz',                    artist: 'Charlie',  type: 'artwork',     likes: 12, height: 360, color: '#5B6B4A', image: 'assets/fanArt/zuottz_sketch.png' },
+  { id: 'sixty-seven',        title: '67',                        artist: 'Wanderers', type: 'screenshots', likes: 18, height: 280, color: '#C0392B', image: 'assets/fanArt/sixty_seven.png' },
 ];

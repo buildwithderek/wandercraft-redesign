@@ -38,14 +38,19 @@ export function fanArtItemHTML(item) {
                   border: 1px solid ${item.color}44;">
         <div class="fanart-placeholder-block" style="background: ${item.color}"></div>
         ${imageMarkup}
+        <button type="button"
+                class="fanart-likes"
+                data-id="${item.id}"
+                data-base-likes="${item.likes}"
+                aria-pressed="false"
+                aria-label="Like ${escapeAttr(item.title)} by ${escapeAttr(item.artist)}">
+          ${ICONS.heart(14)}
+          <span class="fanart-like-count">${item.likes.toLocaleString()}</span>
+        </button>
       </div>
       <div class="fanart-overlay">
         <h4>${item.title}</h4>
         <p>by ${item.artist}</p>
-        <div class="fanart-likes">
-          ${ICONS.heart(12)}
-          ${item.likes.toLocaleString()}
-        </div>
       </div>
     </div>
   `;
