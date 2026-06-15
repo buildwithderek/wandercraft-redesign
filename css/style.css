@@ -1424,6 +1424,8 @@ img {
   display: grid;
   gap: 28px;
   align-items: center;
+  /* Breathing room between the intro paragraph and the three pillars below. */
+  margin-bottom: 56px;
 }
 
 .about-text {
