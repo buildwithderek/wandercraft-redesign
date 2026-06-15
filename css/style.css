@@ -672,7 +672,7 @@ img {
     radial-gradient(140% 90% at 50% 110%, rgba(91, 200, 50, 0.12), transparent 60%),
     var(--bg-raised);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   overflow: hidden;
 }
