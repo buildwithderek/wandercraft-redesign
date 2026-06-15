@@ -28,6 +28,21 @@
   --gold:      #FFD23F;
   --live:      #f43f5e;
 
+  /* Content-type colors — one hue per type, used by the Content Dashboard
+     filter pills (active state) and the content-card badges. Green now means
+     Shorts only; "All" is neutral light so green stays unique. */
+  --filter-videos:        linear-gradient(135deg, #2DD4BF, #3B82F6);  /* long-form — teal→blue */
+  --filter-videos-solid:  #14B8A6;
+  --filter-shorts:        linear-gradient(135deg, #4ADE80, #16A34A);  /* short-form — green */
+  --filter-shorts-solid:  #22C55E;
+  --filter-streams:       linear-gradient(135deg, #F87171, #DC2626);  /* live — red */
+  --filter-streams-solid: #EF4444;
+  --filter-bts:           linear-gradient(135deg, #94A3B8, #475569);  /* extras — slate */
+  --filter-bts-solid:     #64748B;
+  --filter-all:           #F8FAFC;                                    /* default — neutral light */
+  --filter-all-text:      #0F172A;
+  --pill-inactive-border: rgba(255, 255, 255, 0.35);
+
   /* Shape & motion */
   --radius:    14px;
   --radius-lg: 22px;
@@ -559,7 +574,7 @@ img {
 .creator-dashboard-meta {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 18px;
   margin-top: 18px;
   padding: 8px 16px;
   border: 1px solid var(--border);
@@ -570,8 +585,8 @@ img {
 }
 
 .creator-live-pulse {
-  width: 8px;
-  height: 8px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--text-3);
   transition: background var(--t-fast);
@@ -584,7 +599,7 @@ img {
 
 .creator-dashboard-meta.has-live .creator-live-count {
   color: var(--live);
-  font-weight: 700;
+  font-weight: 1400;
 }
 
 .creator-live-divider {
@@ -627,6 +642,33 @@ img {
   background: rgba(91, 200, 50, 0.14);
   border-color: rgba(91, 200, 50, 0.45);
   color: var(--accent);
+}
+
+/* Content Dashboard filter pills — one color per content type when active.
+   Scoped to .content-filters so the creators filters keep the default style.
+   Inactive: transparent with a thin light border. */
+.content-filters .filter-btn {
+  background: transparent;
+  border-color: var(--pill-inactive-border);
+}
+
+.content-filters .filter-btn.active,
+.content-filters .filter-btn.active:hover {
+  border-color: transparent;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);  /* keep white legible on lighter fills */
+}
+
+.content-filters .filter-btn[data-filter="videos"].active  { background: var(--filter-videos); }
+.content-filters .filter-btn[data-filter="shorts"].active  { background: var(--filter-shorts); }
+.content-filters .filter-btn[data-filter="streams"].active { background: var(--filter-streams); }
+.content-filters .filter-btn[data-filter="bts"].active     { background: var(--filter-bts); }
+
+.content-filters .filter-btn[data-filter="all"].active,
+.content-filters .filter-btn[data-filter="all"].active:hover {
+  background: var(--filter-all);
+  color: var(--filter-all-text);
+  text-shadow: none;
 }
 
 /* ==========================================================
@@ -1010,10 +1052,13 @@ img {
   backdrop-filter: blur(6px);
 }
 
-.badge-video  { background: rgba(91, 200, 50, 0.9);  color: #0b2604; }
-.badge-short  { background: rgba(41, 171, 226, 0.9);  color: #062737; }
-.badge-stream { background: rgba(244, 63, 94, 0.9);   color: #fff; }
-.badge-bts    { background: rgba(247, 148, 29, 0.9);  color: #3a1d04; }
+/* Badges share the content-type color identity (same hues as the filter pills),
+   so Videos/Shorts/Streams read the same color throughout. */
+.content-badge { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.badge-video  { background: var(--filter-videos); }
+.badge-short  { background: var(--filter-shorts); }
+.badge-stream { background: var(--filter-streams); }
+.badge-bts    { background: var(--filter-bts); }
 
 .content-duration {
   position: absolute;
