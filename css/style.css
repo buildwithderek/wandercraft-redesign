@@ -574,19 +574,19 @@ img {
 .creator-dashboard-meta {
   display: inline-flex;
   align-items: center;
-  gap: 18px;
-  margin-top: 18px;
-  padding: 8px 16px;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 12px 24px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   color: var(--text-2);
 }
 
 .creator-live-pulse {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--text-3);
   transition: background var(--t-fast);
@@ -599,7 +599,7 @@ img {
 
 .creator-dashboard-meta.has-live .creator-live-count {
   color: var(--live);
-  font-weight: 1400;
+  font-weight: 700;
 }
 
 .creator-live-divider {
