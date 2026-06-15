@@ -42,7 +42,11 @@ const REPO_ROOT = resolve(__dirname, '..');
 const OUTPUT_PATH = resolve(REPO_ROOT, 'data', 'videos.json');
 
 const YT_RSS_BASE = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
-const LIMIT = 30;     // total videos to write to the JSON
+const LIMIT = 60;        // total videos to write to the JSON
+const PER_CHANNEL = 2;   // newest videos taken from EACH creator, so one prolific
+                         // channel can't crowd everyone else out — and every
+                         // creator fits inside the frontend's INITIAL_VIDEO_COUNT
+                         // window (js/data/youtubeConfig.js), so all of them show.
 
 /* ============================================================
    Entry point
@@ -72,13 +76,20 @@ async function main() {
   for (let i = 0; i < settled.length; i++) {
     const result = settled[i];
     if (result.status === 'fulfilled') {
-      videos.push(...result.value);
+      // Keep only each channel's newest PER_CHANNEL videos before merging, so a
+      // high-volume creator doesn't monopolize the global LIMIT and every
+      // creator with uploads gets represented on the dashboard.
+      const newestForChannel = result.value
+        .slice()
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+        .slice(0, PER_CHANNEL);
+      videos.push(...newestForChannel);
     } else {
       console.warn(`[build-youtube-feed] ${channels[i]} failed:`, result.reason?.message || result.reason);
     }
   }
 
-  // Sort newest first, trim to LIMIT.
+  // Merge all channels, sort newest first, trim to LIMIT.
   videos.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   const out = videos.slice(0, LIMIT);
 
