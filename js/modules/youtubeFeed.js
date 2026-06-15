@@ -39,18 +39,29 @@ export async function fetchLatestVideos({ fetchImpl = fetch } = {}) {
    ============================================================ */
 function toContentCardShape(v) {
   const creator = CREATORS.find((c) => c.youtubeChannelId === v.channelId);
+  const link = v.link || `https://www.youtube.com/watch?v=${v.id}`;
   return {
     id:        v.id,
     title:     v.title,
     creator:   v.channelTitle || (creator && creator.name) || 'WanderCraft',
-    type:      'videos',
+    type:      classifyType(link),
     views:     formatViews(v.viewCount),
     date:      formatRelativeDate(v.publishedAt),
     duration:  '',
     color:     creatorColorFor(v.channelId),
-    link:      v.link || `https://www.youtube.com/watch?v=${v.id}`,
+    link,
     thumbnail: v.thumbnail,
   };
+}
+
+/**
+ * "Videos" means long-format YouTube only. A YouTube /shorts/ URL — and any
+ * TikTok link, since TikTok is all short-form — is a "short". Everything else
+ * (a normal /watch?v= URL) is a long-format video.
+ */
+function classifyType(link) {
+  if (/\/shorts\//i.test(link) || /tiktok\.com/i.test(link)) return 'shorts';
+  return 'videos';
 }
 
 function formatViews(n) {
