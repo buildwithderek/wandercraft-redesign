@@ -1873,10 +1873,14 @@ img {
 
   .hero-stat {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 10px;
     padding: 14px 22px;
   }
+
+  /* Number first, then the label — reads "17 Creators / 6 Continents / 1 Dream". */
+  .hero-stat dd { order: -1; }
 
   .hero-stat + .hero-stat {
     border-left: none;
