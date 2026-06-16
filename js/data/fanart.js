@@ -19,7 +19,7 @@
  */
 
 export const FAN_ART_ITEMS = [
-  { id: 'sensei-talon',  title: 'SenseiTalon — Awakening', artist: 'Pavisian',  type: 'artwork',     likes: 0, height: 320, color: '#8B2D8C', image: 'assets/fanArt/fan_art3.png' },
+  { id: 'sensei-talon',  title: 'Besties', artist: 'Community',  type: 'artwork',     likes: 0, height: 320, color: '#8B2D8C', image: 'assets/fanArt/fanart1.png' },
   { id: 'chibi-roster',  title: 'WanderCraft Roster',      artist: 'Community',  type: 'artwork',     likes: 0, height: 300, color: '#A8D5BA', image: 'assets/fanArt/fan_art2.png' },
   { id: 'the-wanderers', title: 'The Wanderers',           artist: 'Community',  type: 'artwork',     likes: 0, height: 240, color: '#C9D4E3', image: 'assets/fanArt/the_wanderers.png' },
   { id: 'sixty-seven',   title: '67',                      artist: 'Wanderers',  type: 'screenshots', likes: 0, height: 280, color: '#C0392B', image: 'assets/fanArt/sixty_seven.gif' },
