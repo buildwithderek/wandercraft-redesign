@@ -45,14 +45,28 @@ export function initNav() {
 }
 
 function updateActiveSection(anchors) {
-  let current = NAV_LINKS[0].id;
+  let bestId = null;
+  let bestTop = -Infinity;
+  const offset = ACTIVE_SECTION_OFFSET;
+
   for (const { id } of NAV_LINKS) {
     const section = document.getElementById(id);
-    if (section && section.getBoundingClientRect().top <= ACTIVE_SECTION_OFFSET) {
-      current = id;
+    if (section) {
+      const top = section.getBoundingClientRect().top;
+      // Consider sections that are above or at the offset
+      if (top <= offset && top > bestTop) {
+        bestTop = top;
+        bestId = id;
+      }
     }
   }
+
+  // Fallback to the first section if none match (e.g., at very top)
+  if (bestId === null) {
+    bestId = NAV_LINKS[0].id;
+  }
+
   anchors.forEach((a) => {
-    a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+    a.classList.toggle('active', a.getAttribute('href') === `#${bestId}`);
   });
 }
