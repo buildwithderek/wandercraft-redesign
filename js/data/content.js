@@ -154,7 +154,6 @@ export const CONTENT_FILTERS = [
   { value: 'videos', label: 'Videos' },
   { value: 'shorts', label: 'Shorts' },
   { value: 'streams', label: 'Streams' },
-  { value: 'bts', label: 'Behind the Scenes' },
 ];
 
 /** Sort options shown in the dropdown. */
