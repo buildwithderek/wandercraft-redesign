@@ -19,6 +19,24 @@
 
 export const MERCH_ITEMS = [
   {
+    id: 'sticker-pack',
+    name: 'WanderCraft Sticker Pack — Full Set',
+    category: 'Stickers',
+    price: '$20.00',
+    image: 'https://imgproxy.fourthwall.dev/vOSJ-E5XhU2Gx4evD7tdS-59cM9fdCfgkUcwrKkwGSA/w:720/sm:1/enc/GcSu4uLN3rgmQv_5/PTrjI3OG86zQB_O-/agKlf9Y77wqyi84V/dssMHGSv2795h2wf/oTQtqmg80RnYwpZ2/5brlMcZcjX45_556/7hTDyKBQJQTWZ4NM/LPVVTxtjV7xCur8i/H54ERNUSLPf4BL3D/uTujrFRBwre00OvS/cRtx2PRLASHyGHHx/1gRfvkuCK9uJUFcO/ApX-6rEuCporSZOE/IY_vPw.webp',
+    url: 'https://shopwandercraft.com/products/official-wandercraft-sticker-pack-full-set',
+    badge: { label: 'Featured', variant: 'featured' },
+  },
+  {
+    id: 'mystery-stickers',
+    name: 'WanderCraft Mystery Sticker Pack',
+    category: 'Stickers',
+    price: '$12.00',
+    image: 'https://imgproxy.fourthwall.dev/YvfZ9llgOQLdCIMiBo4_Ye00ktfDSK7iLdYg6OHsvC8/w:720/sm:1/enc/FZPlAKQB0Zug7La-/sjyy0oRMKkP6F0K2/LcSJcKcJPYPtRWL2/J21yuaE842yVyqtj/ArlJvghU6VdVIj6B/dzhWJ3aiJ1GuIXse/Y4ZZTgmZu9FVfeGN/7YgTKRk8HaGuNWh9/nKF5ukdVos4hifGl/fnYK2PoVa78baw6Z/xQuO9R5lGJkR1y3a/Doyb60fT1AKKZh8k/2UHFdG83bdm1KFrp/qf7pAA.webp',
+    url: 'https://shopwandercraft.com/products/official-wandercraft-mystery-sticker-pack',
+    badge: { label: 'Featured', variant: 'featured' },
+  },
+  {
     id: 's2-hoodie',
     name: 'Official WanderCraft S2 Hoodie',
     category: 'Hoodie',
@@ -71,24 +89,6 @@ export const MERCH_ITEMS = [
     image: 'https://imgproxy.fourthwall.dev/B5YeXFOjVXkOCANMObnV0JdN1T54SXga8df6l-4gKhU/w:720/sm:1/enc/9TRaCmqr9OHnMj7V/EBDRMz8kSu8cVLag/-uqdiqLDObPZ87tU/AFXHLkYiXeP8hwIK/vCDEDZti-OMLVXvY/xTlHhi197ifOKlfX/3Lb-3p8SYA7HbsiY/Utrg6k6VRePSDycd/sH0WqhckpS7DEWiY/-h_FOt8a_wvI8RT3/GJPdBpiTsAlDRgbd/FAZF7Ki5gl77_t-9/15IFZcZQbYq0rRnq/8Fg-2vivjxM_TURk/Y7ivpYjxujc.jpg',
     url: 'https://shopwandercraft.com/products/dream-it-mine-it-build-it-official-t-shirt',
     badge: null,
-  },
-  {
-    id: 'sticker-pack',
-    name: 'WanderCraft Sticker Pack — Full Set',
-    category: 'Stickers',
-    price: '$20.00',
-    image: 'https://imgproxy.fourthwall.dev/vOSJ-E5XhU2Gx4evD7tdS-59cM9fdCfgkUcwrKkwGSA/w:720/sm:1/enc/GcSu4uLN3rgmQv_5/PTrjI3OG86zQB_O-/agKlf9Y77wqyi84V/dssMHGSv2795h2wf/oTQtqmg80RnYwpZ2/5brlMcZcjX45_556/7hTDyKBQJQTWZ4NM/LPVVTxtjV7xCur8i/H54ERNUSLPf4BL3D/uTujrFRBwre00OvS/cRtx2PRLASHyGHHx/1gRfvkuCK9uJUFcO/ApX-6rEuCporSZOE/IY_vPw.webp',
-    url: 'https://shopwandercraft.com/products/official-wandercraft-sticker-pack-full-set',
-    badge: { label: 'Featured', variant: 'featured' },
-  },
-  {
-    id: 'mystery-stickers',
-    name: 'WanderCraft Mystery Sticker Pack',
-    category: 'Stickers',
-    price: '$12.00',
-    image: 'https://imgproxy.fourthwall.dev/YvfZ9llgOQLdCIMiBo4_Ye00ktfDSK7iLdYg6OHsvC8/w:720/sm:1/enc/FZPlAKQB0Zug7La-/sjyy0oRMKkP6F0K2/LcSJcKcJPYPtRWL2/J21yuaE842yVyqtj/ArlJvghU6VdVIj6B/dzhWJ3aiJ1GuIXse/Y4ZZTgmZu9FVfeGN/7YgTKRk8HaGuNWh9/nKF5ukdVos4hifGl/fnYK2PoVa78baw6Z/xQuO9R5lGJkR1y3a/Doyb60fT1AKKZh8k/2UHFdG83bdm1KFrp/qf7pAA.webp',
-    url: 'https://shopwandercraft.com/products/official-wandercraft-mystery-sticker-pack',
-    badge: { label: 'Featured', variant: 'featured' },
   },
   {
     id: 's2-desk-mat',
