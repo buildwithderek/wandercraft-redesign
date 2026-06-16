@@ -44,7 +44,9 @@ function toContentCardShape(v) {
     id:        v.id,
     title:     v.title,
     creator:   v.channelTitle || (creator && creator.name) || 'WanderCraft',
-    type:      classifyType(link),
+    // The feed builder tags each item by type (videos | streams | shorts).
+    // Fall back to URL-based detection for older entries without a type.
+    type:      v.type || classifyType(link),
     views:     formatViews(v.viewCount),
     date:      formatRelativeDate(v.publishedAt),
     duration:  '',
@@ -55,9 +57,10 @@ function toContentCardShape(v) {
 }
 
 /**
- * "Videos" means long-format YouTube only. A YouTube /shorts/ URL — and any
- * TikTok link, since TikTok is all short-form — is a "short". Everything else
- * (a normal /watch?v= URL) is a long-format video.
+ * Fallback type detection from the URL, used only for feed entries that predate
+ * the per-type builder. A YouTube /shorts/ URL (or any TikTok link, since TikTok
+ * is all short-form) is a "short"; a /watch?v= URL is a long-format video.
+ * (Live streams can't be told apart from a URL — the builder tags those.)
  */
 function classifyType(link) {
   if (/\/shorts\//i.test(link) || /tiktok\.com/i.test(link)) return 'shorts';

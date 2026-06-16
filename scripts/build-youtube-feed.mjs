@@ -1,174 +1,261 @@
 #!/usr/bin/env node
 /**
- * WanderCraft — YouTube feed builder
- * ==================================
+ * WanderCraft — YouTube content feed builder (per-type)
+ * =====================================================
  *
- * Reads CREATORS from js/data/creators.js, fetches the public RSS feed
- * for every creator with a youtubeChannelId, parses to JSON, and writes
- * the merged + sorted result to data/videos.json.
+ * Goal: for every creator with a youtubeChannelId, pull their THREE most
+ * recent items BY TYPE and tag each one correctly:
  *
- * Intended to be run by the GitHub Action in .github/workflows/youtube-feed.yml,
- * which executes on a cron and commits the regenerated JSON back to the repo.
+ *   - latest regular upload   → type: 'videos'   (the /videos tab)
+ *   - latest live stream      → type: 'streams'  (the /streams tab)
+ *   - latest short            → type: 'shorts'   (the /shorts tab)
  *
- * Can also be run locally to test:
- *   node scripts/build-youtube-feed.mjs
+ * Why tabs instead of RSS:
+ *   YouTube's RSS feed (videos.xml) lists recent uploads but has NO signal for
+ *   whether a video is/was a live stream — both use /watch?v= links. So streams
+ *   would be miscategorized as videos. The channel tab pages DO separate the
+ *   three types, so we read those. No API key, no quota.
  *
- * The site's frontend (js/modules/youtubeFeed.js) fetches data/videos.json
- * directly — no Worker, no API key, no quota, no runtime infrastructure.
+ * Dates: the /videos and /streams tabs expose a relative time ("3 months ago",
+ * "Streamed 10 hours ago"); we parse those to an approximate ISO date for
+ * sorting/display. The /shorts tab exposes no date, so we backfill it from the
+ * channel's RSS feed (exact date) when the short is recent enough to appear
+ * there, otherwise we approximate.
  *
- * --------------------------------------------------------------------
- * RSS endpoint (no auth, no quota):
- *   https://www.youtube.com/feeds/videos.xml?channel_id={UCxxxxxxxxxxx}
+ * Resilience: every fetch is fail-soft. A channel (or one of its tabs) that
+ * errors is simply skipped — partial output beats failing the whole job.
  *
- * Output shape (matches the frontend's content-card adapter):
- *   [
- *     { id, title, channelTitle, channelId, publishedAt, link,
- *       thumbnail, viewCount? },
- *     ...
- *   ]
+ * Output shape (consumed by js/modules/youtubeFeed.js):
+ *   [{ id, title, channelTitle, channelId, type, publishedAt, link,
+ *      thumbnail, viewCount? }, ...]
  *
- * If a single channel feed fails, that channel is silently skipped —
- * partial output beats failing the whole job.
+ * Run locally:  node scripts/build-youtube-feed.mjs
  */
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Resolve repo root (one dir up from scripts/) so paths are stable
-// regardless of where the Action's working directory is.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
 const OUTPUT_PATH = resolve(REPO_ROOT, 'data', 'videos.json');
 
-const YT_RSS_BASE = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
-const LIMIT = 60;        // total videos to write to the JSON
-const PER_CHANNEL = 2;   // newest videos taken from EACH creator, so one prolific
-                         // channel can't crowd everyone else out — and every
-                         // creator fits inside the frontend's INITIAL_VIDEO_COUNT
-                         // window (js/data/youtubeConfig.js), so all of them show.
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 '
+         + '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+const RSS_BASE = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
+const CHANNEL_BASE = 'https://www.youtube.com/channel/';
+
+const TABS = [
+  { tab: 'videos',  type: 'videos' },
+  { tab: 'streams', type: 'streams' },
+  { tab: 'shorts',  type: 'shorts' },
+];
+
+const LIMIT = 45;   // total items to write (12 creators × up to 3 types = 36)
 
 /* ============================================================
    Entry point
    ============================================================ */
-
 async function main() {
-  // Import the creators list. Using a relative path that works from
-  // the repo root because the Action checks out into the workspace root.
   const { CREATORS } = await import(
     `file://${resolve(REPO_ROOT, 'js/data/creators.js')}`
   );
-
-  const channels = CREATORS
-    .map((c) => c.youtubeChannelId)
-    .filter(Boolean);
+  const channels = CREATORS.filter((c) => c.youtubeChannelId);
 
   if (channels.length === 0) {
-    console.log('[build-youtube-feed] No channel IDs in creators.js — writing empty array.');
+    console.log('[build-youtube-feed] No channel IDs — writing empty array.');
     await writeJson([]);
     return;
   }
 
-  console.log(`[build-youtube-feed] Fetching ${channels.length} channel(s)...`);
-  const settled = await Promise.allSettled(channels.map(fetchChannelFeed));
+  console.log(`[build-youtube-feed] Pulling videos/streams/shorts for ${channels.length} creator(s)...`);
+  const settled = await Promise.allSettled(channels.map(buildForCreator));
 
-  const videos = [];
-  for (let i = 0; i < settled.length; i++) {
-    const result = settled[i];
-    if (result.status === 'fulfilled') {
-      // Keep only each channel's newest PER_CHANNEL videos before merging, so a
-      // high-volume creator doesn't monopolize the global LIMIT and every
-      // creator with uploads gets represented on the dashboard.
-      const newestForChannel = result.value
-        .slice()
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-        .slice(0, PER_CHANNEL);
-      videos.push(...newestForChannel);
-    } else {
-      console.warn(`[build-youtube-feed] ${channels[i]} failed:`, result.reason?.message || result.reason);
-    }
-  }
+  const items = [];
+  settled.forEach((r, i) => {
+    if (r.status === 'fulfilled') items.push(...r.value);
+    else console.warn(`[build-youtube-feed] ${channels[i].name} failed:`, r.reason?.message || r.reason);
+  });
 
-  // Merge all channels, sort newest first, trim to LIMIT.
-  videos.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
-  const out = videos.slice(0, LIMIT);
+  // Newest first, then cap.
+  items.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  const out = items.slice(0, LIMIT);
 
   await writeJson(out);
-  console.log(`[build-youtube-feed] Wrote ${out.length} videos to ${OUTPUT_PATH}`);
+  const byType = out.reduce((m, v) => ((m[v.type] = (m[v.type] || 0) + 1), m), {});
+  console.log(`[build-youtube-feed] Wrote ${out.length} items`, byType,
+    `from ${new Set(out.map((v) => v.channelId)).size} creators`);
 }
 
-async function writeJson(arr) {
-  await mkdir(dirname(OUTPUT_PATH), { recursive: true });
-  // Stable formatting (2-space indent + trailing newline) so git diffs
-  // stay small and reviewable when the Action commits the file.
-  await writeFile(OUTPUT_PATH, JSON.stringify(arr, null, 2) + '\n');
+/** Build up to 3 entries (one per type) for a single creator. */
+async function buildForCreator(creator) {
+  const id = creator.youtubeChannelId;
+  // RSS gives exact dates for recent uploads (incl. shorts) — used to backfill.
+  const rssDates = await fetchRssDates(id).catch(() => new Map());
+
+  const results = await Promise.allSettled(
+    TABS.map(async ({ tab, type }) => {
+      const item = await fetchTabLatest(id, tab);
+      if (!item) return null;
+      const publishedAt =
+        rssDates.get(item.id) ||
+        relativeToISO(item.relDate) ||
+        new Date().toISOString(); // last-resort: treat as just-now so it still shows
+      return {
+        id: item.id,
+        title: item.title || '(untitled)',
+        channelTitle: creator.name,
+        channelId: id,
+        type,
+        publishedAt,
+        link: type === 'shorts'
+          ? `https://www.youtube.com/shorts/${item.id}`
+          : `https://www.youtube.com/watch?v=${item.id}`,
+        thumbnail: `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`,
+        ...(item.views != null ? { viewCount: item.views } : {}),
+      };
+    }),
+  );
+  return results.filter((r) => r.status === 'fulfilled' && r.value).map((r) => r.value);
 }
 
 /* ============================================================
-   Per-channel fetch + parse
+   Channel tab scraping
    ============================================================ */
 
-async function fetchChannelFeed(channelId) {
-  const res = await fetch(YT_RSS_BASE + encodeURIComponent(channelId));
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status} for channel ${channelId}`);
-  }
-  const xml = await res.text();
-  return parseAtomFeed(xml);
+/** Fetch a channel tab and return its newest item, or null. */
+async function fetchTabLatest(channelId, tab) {
+  const res = await fetch(`${CHANNEL_BASE}${channelId}/${tab}`, {
+    headers: { 'User-Agent': UA, 'Accept-Language': 'en-US' },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${tab}`);
+  const data = extractInitialData(await res.text());
+  if (!data) return null;
+  return firstGridItem(data);
 }
 
 /**
- * Tiny regex-based Atom parser. Mirrors workers/youtube-feed/worker.js.
- * If you ever update one, update the other — or extract this into a
- * shared file imported by both.
+ * Find the channel's primary content grid (richGridRenderer) and return the
+ * first real video item, parsed. Handles both the modern lockupViewModel
+ * (videos/streams) and shortsLockupViewModel (shorts). Returns null if the
+ * tab is empty (e.g. a channel with no YouTube streams).
  */
-function parseAtomFeed(xml) {
-  const entries = xml.split(/<entry>/i).slice(1);
-  const videos = [];
+function firstGridItem(data) {
+  for (const node of walk(data)) {
+    const contents = node.richGridRenderer?.contents;
+    if (!contents) continue;
+    for (const it of contents) {
+      const content = it.richItemRenderer?.content;
+      if (!content) continue;
 
-  for (const raw of entries) {
-    const entry = raw.split(/<\/entry>/i)[0];
-    if (!entry) continue;
+      const lv = content.lockupViewModel;
+      if (lv?.contentId) {
+        const meta = lv.metadata?.lockupMetadataViewModel;
+        const rows = (meta?.metadata?.contentMetadataViewModel?.metadataRows || [])
+          .flatMap((r) => (r.metadataParts || []).map((p) => p.text?.content))
+          .filter(Boolean);
+        return {
+          id: lv.contentId,
+          title: meta?.title?.content,
+          relDate: rows.find((t) => /ago$/i.test(t)) || null,
+          views: parseViews(rows.find((t) => /view/i.test(t))),
+        };
+      }
 
-    const id            = pick(entry, /<yt:videoId>([^<]+)<\/yt:videoId>/i);
-    if (!id) continue;
-    const title         = decodeXml(pick(entry, /<title>([\s\S]*?)<\/title>/i));
-    const channelTitle  = decodeXml(pick(entry, /<author>\s*<name>([\s\S]*?)<\/name>/i));
-    const channelId     = pick(entry, /<yt:channelId>([^<]+)<\/yt:channelId>/i);
-    const publishedAt   = pick(entry, /<published>([^<]+)<\/published>/i);
-    const link          = pick(entry, /<link\s+[^>]*href=(["'])([^"']+)\1/i, 2);
-    const thumbnail     = pick(entry, /<media:thumbnail\s+url=(["'])([^"']+)\1/i, 2);
-    const viewCountRaw  = pick(entry, /<media:statistics\s+[^>]*views=(["'])(\d+)\1/i, 2);
-    const viewCount     = viewCountRaw ? parseInt(viewCountRaw, 10) : undefined;
-
-    videos.push({
-      id,
-      title,
-      channelTitle,
-      channelId,
-      publishedAt,
-      link,
-      thumbnail: thumbnail || `https://i3.ytimg.com/vi/${id}/hqdefault.jpg`,
-      ...(viewCount !== undefined ? { viewCount } : {}),
-    });
+      const sv = content.shortsLockupViewModel;
+      if (sv) {
+        const id = sv.entityId?.replace('shorts-shelf-item-', '');
+        if (!id) continue;
+        const om = sv.overlayMetadata;
+        return {
+          id,
+          title: om?.primaryText?.content,
+          relDate: null, // shorts tab has no date; backfilled from RSS
+          views: parseViews(om?.secondaryText?.content),
+        };
+      }
+    }
+    return null; // first grid only
   }
-  return videos;
+  return null;
 }
 
-function pick(text, regex, group = 1) {
-  const m = text.match(regex);
-  return m ? m[group].trim() : '';
+/** Pull the embedded ytInitialData JSON via brace-balancing (string-aware). */
+function extractInitialData(html) {
+  let i = html.indexOf('ytInitialData');
+  if (i < 0) return null;
+  i = html.indexOf('{', i);
+  if (i < 0) return null;
+  let depth = 0, inStr = false, esc = false;
+  for (let j = i; j < html.length; j++) {
+    const c = html[j];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === '\\') esc = true;
+      else if (c === '"') inStr = false;
+    } else if (c === '"') inStr = true;
+    else if (c === '{') depth++;
+    else if (c === '}' && --depth === 0) {
+      try { return JSON.parse(html.slice(i, j + 1)); } catch { return null; }
+    }
+  }
+  return null;
 }
 
-function decodeXml(s) {
-  return s
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'");
+function* walk(o) {
+  if (o && typeof o === 'object') {
+    yield o;
+    for (const k of Object.keys(o)) yield* walk(o[k]);
+  }
 }
 
 /* ============================================================
-   Run
+   RSS (date backfill) + parsing helpers
    ============================================================ */
+
+/** Map of { videoId → ISO published } for the channel's recent uploads. */
+async function fetchRssDates(channelId) {
+  const res = await fetch(RSS_BASE + encodeURIComponent(channelId));
+  if (!res.ok) throw new Error(`RSS HTTP ${res.status}`);
+  const xml = await res.text();
+  const map = new Map();
+  for (const raw of xml.split(/<entry>/i).slice(1)) {
+    const id = (raw.match(/<yt:videoId>([^<]+)<\/yt:videoId>/i) || [])[1];
+    const pub = (raw.match(/<published>([^<]+)<\/published>/i) || [])[1];
+    if (id && pub) map.set(id, new Date(pub).toISOString());
+  }
+  return map;
+}
+
+/** "3 months ago" / "Streamed 10 hours ago" → approximate ISO. */
+function relativeToISO(text) {
+  if (!text) return null;
+  const m = text.replace(/^streamed\s+/i, '')
+    .match(/(\d+)\s+(second|minute|hour|day|week|month|year)s?\s+ago/i);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  const secs = { second: 1, minute: 60, hour: 3600, day: 86400,
+    week: 604800, month: 2629800, year: 31557600 }[m[2].toLowerCase()];
+  return new Date(Date.now() - n * secs * 1000).toISOString();
+}
+
+/** "1.2K views" / "4.4M views" / "280 views" → number. */
+function parseViews(text) {
+  if (!text) return null;
+  const m = text.match(/([\d.]+)\s*([KMB]?)/i);
+  if (!m) return null;
+  const mult = { K: 1e3, M: 1e6, B: 1e9 }[(m[2] || '').toUpperCase()] || 1;
+  return Math.round(parseFloat(m[1]) * mult);
+}
+
+/* ============================================================
+   Output
+   ============================================================ */
+async function writeJson(arr) {
+  await mkdir(dirname(OUTPUT_PATH), { recursive: true });
+  await writeFile(OUTPUT_PATH, JSON.stringify(arr, null, 2) + '\n');
+}
+
 main().catch((err) => {
   console.error('[build-youtube-feed] FATAL:', err);
   process.exit(1);

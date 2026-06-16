@@ -21,5 +21,6 @@
  */
 export const STATIC_FEED_PATH = 'data/videos.json';
 
-/** Max number of videos the dashboard shows on first render. */
-export const INITIAL_VIDEO_COUNT = 30;
+/** Max items pulled from the feed (matches the builder's LIMIT so the full
+ *  per-type set — up to 3 per creator — is available to the dashboard). */
+export const INITIAL_VIDEO_COUNT = 45;
