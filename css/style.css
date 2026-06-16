@@ -84,7 +84,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: url('../assets/bg/forest.jpg') center / cover no-repeat;
+  background: url('../assets/bg/islands.jpg') center / cover no-repeat;
 }
 
 body::after {
