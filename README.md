@@ -1,6 +1,6 @@
 # WanderCraft — Redesign
 
-Adventures Everywhere — a creator-collective marketing site. Vanilla HTML, CSS, and ES modules. No build step for runtime.
+The Adventure Is Everywhere — a creator-collective marketing site. Vanilla HTML, CSS, and ES modules. No build step for runtime.
 
 This is a visual redesign of the original `wandercraft/` project. All JavaScript
 (modules, components, data, tests) is unchanged — only `index.html` and
