@@ -24,7 +24,8 @@ export const MERCH_ITEMS = [
     category: 'Hoodie',
     price: '$60.00',
     image: 'https://imgproxy.fourthwall.dev/e8dUhzL1lRWcJVrwAh-W-OBH6c1yVZmcMMgseBOkpeQ/w:720/sm:1/enc/0TO7Oc8br0M4wtYN/hjQevVSTd5p7Z3Ql/knOy0FUtaf9DNY5B/2kdPhLhQkcyM81KX/DZmyIPXDJ3UJpdm0/-bli5YPQW8ilmuYa/zE4D9aQr8J8zuJTl/DsUXUE9fSG72pBxN/B2QMvb55d1QyEen1/2blQKcm078vI3cFz/X4EXJJ1ZrXxPmZGI/T8ccwIkkBpZDsJIK/hsSvjs9damJbEs3M/En7LeIthX8Rt2tIp/YO4UHYXJQcc.jpg',
-    url: 'https://shopwandercraft.com/products/official-wandercraft-s2-hoodie'
+    url: 'https://shopwandercraft.com/products/official-wandercraft-s2-hoodie',
+    badge: null,
   },
   {
     id: 's2-tee',
