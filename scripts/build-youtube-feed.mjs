@@ -95,7 +95,7 @@ async function buildForCreator(creator) {
 
   const results = await Promise.allSettled(
     TABS.map(async ({ tab, type }) => {
-      const item = await fetchTabLatest(id, tab);
+      const item = await fetchTabLatest(id, tab, type);
       if (!item) return null;
       const publishedAt =
         rssDates.get(item.id) ||
@@ -123,59 +123,71 @@ async function buildForCreator(creator) {
    Channel tab scraping
    ============================================================ */
 
-/** Fetch a channel tab and return its newest item, or null. */
-async function fetchTabLatest(channelId, tab) {
+/** Fetch a channel tab and return its newest item of that type, or null. */
+async function fetchTabLatest(channelId, tab, type) {
   const res = await fetch(`${CHANNEL_BASE}${channelId}/${tab}`, {
     headers: { 'User-Agent': UA, 'Accept-Language': 'en-US' },
   });
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${tab}`);
   const data = extractInitialData(await res.text());
   if (!data) return null;
-  return firstGridItem(data);
+  return firstGridItem(data, type);
 }
 
 /**
  * Find the channel's primary content grid (richGridRenderer) and return the
- * first real video item, parsed. Handles both the modern lockupViewModel
- * (videos/streams) and shortsLockupViewModel (shorts). Returns null if the
- * tab is empty (e.g. a channel with no YouTube streams).
+ * newest item for the requested type. Handles the modern lockupViewModel
+ * (videos/streams) and shortsLockupViewModel (shorts).
+ *
+ * Streams caveat: YouTube redirects /streams to the channel's /videos content
+ * when a channel has NEVER livestreamed, so the grid is full of regular
+ * uploads. A genuine past stream's metadata reads "Streamed …", so for the
+ * streams tab we only accept items carrying that marker — otherwise a
+ * non-streaming channel's latest upload would be mislabeled as a stream.
+ *
+ * Returns null when nothing qualifies (e.g. a channel with no real streams).
  */
-function firstGridItem(data) {
+function firstGridItem(data, type) {
   for (const node of walk(data)) {
     const contents = node.richGridRenderer?.contents;
     if (!contents) continue;
+
     for (const it of contents) {
       const content = it.richItemRenderer?.content;
       if (!content) continue;
 
-      const lv = content.lockupViewModel;
-      if (lv?.contentId) {
-        const meta = lv.metadata?.lockupMetadataViewModel;
-        const rows = (meta?.metadata?.contentMetadataViewModel?.metadataRows || [])
-          .flatMap((r) => (r.metadataParts || []).map((p) => p.text?.content))
-          .filter(Boolean);
+      if (type === 'shorts') {
+        const sv = content.shortsLockupViewModel;
+        if (!sv) continue;
+        const id = sv.entityId?.replace('shorts-shelf-item-', '');
+        if (!id) continue;
         return {
-          id: lv.contentId,
-          title: meta?.title?.content,
-          relDate: rows.find((t) => /ago$/i.test(t)) || null,
-          views: parseViews(rows.find((t) => /view/i.test(t))),
+          id,
+          title: sv.overlayMetadata?.primaryText?.content,
+          relDate: null, // shorts tab carries no date; backfilled from RSS
+          views: parseViews(sv.overlayMetadata?.secondaryText?.content),
         };
       }
 
-      const sv = content.shortsLockupViewModel;
-      if (sv) {
-        const id = sv.entityId?.replace('shorts-shelf-item-', '');
-        if (!id) continue;
-        const om = sv.overlayMetadata;
-        return {
-          id,
-          title: om?.primaryText?.content,
-          relDate: null, // shorts tab has no date; backfilled from RSS
-          views: parseViews(om?.secondaryText?.content),
-        };
-      }
+      // videos & streams both use lockupViewModel.
+      const lv = content.lockupViewModel;
+      if (!lv?.contentId) continue;
+      const meta = lv.metadata?.lockupMetadataViewModel;
+      const rows = (meta?.metadata?.contentMetadataViewModel?.metadataRows || [])
+        .flatMap((r) => (r.metadataParts || []).map((p) => p.text?.content))
+        .filter(Boolean);
+
+      // Only count it as a stream if YouTube marks it as one ("Streamed …").
+      if (type === 'streams' && !rows.some((t) => /streamed/i.test(t))) continue;
+
+      return {
+        id: lv.contentId,
+        title: meta?.title?.content,
+        relDate: rows.find((t) => /ago$/i.test(t)) || null,
+        views: parseViews(rows.find((t) => /view/i.test(t))),
+      };
     }
-    return null; // first grid only
+    return null; // only the first (primary) grid matters
   }
   return null;
 }
