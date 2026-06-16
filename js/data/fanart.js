@@ -19,8 +19,8 @@
  */
 
 export const FAN_ART_ITEMS = [
-  { id: 'sensei-talon',  title: 'Besties', artist: 'Community',  type: 'artwork',     likes: 0, height: 320, color: '#8B2D8C', image: 'assets/fanArt/fanart1.png' },
-  { id: 'chibi-roster',  title: 'WanderCraft Roster',      artist: 'Community',  type: 'artwork',     likes: 0, height: 300, color: '#A8D5BA', image: 'assets/fanArt/fan_art2.png' },
-  { id: 'the-wanderers', title: 'The Wanderers',           artist: 'Community',  type: 'artwork',     likes: 0, height: 240, color: '#C9D4E3', image: 'assets/fanArt/the_wanderers.png' },
-  { id: 'sixty-seven',   title: '67',                      artist: 'Wanderers',  type: 'screenshots', likes: 0, height: 280, color: '#C0392B', image: 'assets/fanArt/sixty_seven.gif' },
+  { id: 'fan-art-1', title: 'Making a Splash', artist: 'Community', type: 'artwork', likes: 0, height: 340, color: '#29ABE2', image: 'assets/fanArt/fan_art1.png' },
+  { id: 'fan-art-2', title: 'Blade',           artist: 'Community', type: 'artwork', likes: 0, height: 260, color: '#5BC832', image: 'assets/fanArt/fan_art2.png' },
+  { id: 'fan-art-3', title: 'Peace',           artist: 'Community', type: 'artwork', likes: 0, height: 340, color: '#F7941D', image: 'assets/fanArt/fan_art3.png' },
+  { id: 'fan-art-4', title: 'Sweet Beats',     artist: 'Community', type: 'artwork', likes: 0, height: 300, color: '#EC4899', image: 'assets/fanArt/fan_art4.png' },
 ];
