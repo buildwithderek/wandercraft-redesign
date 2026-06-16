@@ -23,4 +23,8 @@ export const FAN_ART_ITEMS = [
   { id: 'fan-art-2', title: 'Blade',           artist: 'Community', type: 'artwork', likes: 0, height: 260, color: '#5BC832', image: 'assets/fanArt/fan_art2.png' },
   { id: 'fan-art-3', title: 'Peace',           artist: 'Community', type: 'artwork', likes: 0, height: 340, color: '#F7941D', image: 'assets/fanArt/fan_art3.png' },
   { id: 'fan-art-4', title: 'Sweet Beats',     artist: 'Community', type: 'artwork', likes: 0, height: 300, color: '#EC4899', image: 'assets/fanArt/fan_art4.png' },
+  { id: 'fan-art-5', title: 'MINECO Supremacy', artist: 'MISERY',    type: 'artwork', likes: 0, height: 190, color: '#8B2D8C', image: 'assets/fanArt/fan_art5.jpg' },
+  { id: 'fan-art-6', title: 'Matcha Potato',    artist: 'Community', type: 'artwork', likes: 0, height: 200, color: '#4CAF7D', image: 'assets/fanArt/fan_art6.png' },
+  { id: 'fan-art-7', title: 'Season 2',         artist: 'Community', type: 'artwork', likes: 0, height: 240, color: '#29ABE2', image: 'assets/fanArt/fan_art7.png' },
+  { id: 'fan-art-8', title: 'Bucket Buddies',   artist: 'Community', type: 'artwork', likes: 0, height: 360, color: '#D9C3A5', image: 'assets/fanArt/fan_art8.jpg' },
 ];

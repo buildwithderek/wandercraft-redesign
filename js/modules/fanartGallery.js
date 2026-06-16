@@ -14,7 +14,7 @@ import { fanArtItemHTML } from '../components/fanartItem.js';
 import { observeNewElements } from './scrollReveal.js';
 
 /** Only the first N items render — keeps the gallery a curated showcase. */
-const TOP_N = 4;
+const TOP_N = 8;
 
 /**
  * localStorage key holding the map of { [itemId]: true } the visitor has liked.
