@@ -24,8 +24,7 @@ export const MERCH_ITEMS = [
     category: 'Hoodie',
     price: '$60.00',
     image: 'https://imgproxy.fourthwall.dev/e8dUhzL1lRWcJVrwAh-W-OBH6c1yVZmcMMgseBOkpeQ/w:720/sm:1/enc/0TO7Oc8br0M4wtYN/hjQevVSTd5p7Z3Ql/knOy0FUtaf9DNY5B/2kdPhLhQkcyM81KX/DZmyIPXDJ3UJpdm0/-bli5YPQW8ilmuYa/zE4D9aQr8J8zuJTl/DsUXUE9fSG72pBxN/B2QMvb55d1QyEen1/2blQKcm078vI3cFz/X4EXJJ1ZrXxPmZGI/T8ccwIkkBpZDsJIK/hsSvjs9damJbEs3M/En7LeIthX8Rt2tIp/YO4UHYXJQcc.jpg',
-    url: 'https://shopwandercraft.com/products/official-wandercraft-s2-hoodie',
-    badge: { label: 'Featured', variant: 'featured' },
+    url: 'https://shopwandercraft.com/products/official-wandercraft-s2-hoodie'
   },
   {
     id: 's2-tee',
@@ -79,7 +78,7 @@ export const MERCH_ITEMS = [
     price: '$20.00',
     image: 'https://imgproxy.fourthwall.dev/vOSJ-E5XhU2Gx4evD7tdS-59cM9fdCfgkUcwrKkwGSA/w:720/sm:1/enc/GcSu4uLN3rgmQv_5/PTrjI3OG86zQB_O-/agKlf9Y77wqyi84V/dssMHGSv2795h2wf/oTQtqmg80RnYwpZ2/5brlMcZcjX45_556/7hTDyKBQJQTWZ4NM/LPVVTxtjV7xCur8i/H54ERNUSLPf4BL3D/uTujrFRBwre00OvS/cRtx2PRLASHyGHHx/1gRfvkuCK9uJUFcO/ApX-6rEuCporSZOE/IY_vPw.webp',
     url: 'https://shopwandercraft.com/products/official-wandercraft-sticker-pack-full-set',
-    badge: null,
+    badge: { label: 'Featured', variant: 'featured' },
   },
   {
     id: 'mystery-stickers',
@@ -88,7 +87,7 @@ export const MERCH_ITEMS = [
     price: '$12.00',
     image: 'https://imgproxy.fourthwall.dev/YvfZ9llgOQLdCIMiBo4_Ye00ktfDSK7iLdYg6OHsvC8/w:720/sm:1/enc/FZPlAKQB0Zug7La-/sjyy0oRMKkP6F0K2/LcSJcKcJPYPtRWL2/J21yuaE842yVyqtj/ArlJvghU6VdVIj6B/dzhWJ3aiJ1GuIXse/Y4ZZTgmZu9FVfeGN/7YgTKRk8HaGuNWh9/nKF5ukdVos4hifGl/fnYK2PoVa78baw6Z/xQuO9R5lGJkR1y3a/Doyb60fT1AKKZh8k/2UHFdG83bdm1KFrp/qf7pAA.webp',
     url: 'https://shopwandercraft.com/products/official-wandercraft-mystery-sticker-pack',
-    badge: null,
+    badge: { label: 'Featured', variant: 'featured' },
   },
   {
     id: 's2-desk-mat',
