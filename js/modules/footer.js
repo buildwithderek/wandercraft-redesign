@@ -21,6 +21,6 @@ export function initFooter() {
   // Also ensure the copyright contact is wired.
   const contactNode = document.querySelector('.footer-bottom .footer-contact');
   if (contactNode) {
-    contactNode.innerHTML = `Reach us: <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`;
+    contactNode.innerHTML = `Reach us: <a href="mailto:playwandercraft@gmail.com">playwandercraft@gmail.com</a>`;
   }
 }
