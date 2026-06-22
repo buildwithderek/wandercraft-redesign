@@ -18,7 +18,8 @@
     "type": "videos",
     "publishedAt": "2026-06-19T19:44:54.000Z",
     "link": "https://www.youtube.com/watch?v=ZI6r9OG8mWM",
-    "thumbnail": "https://i.ytimg.com/vi/ZI6r9OG8mWM/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/ZI6r9OG8mWM/hqdefault.jpg",
+    "viewCount": 5100
   },
   {
     "id": "45BlLKAhY9U",
@@ -40,7 +41,7 @@
     "publishedAt": "2026-06-16T08:33:42.000Z",
     "link": "https://www.youtube.com/watch?v=G3lot5Fx4t4",
     "thumbnail": "https://i.ytimg.com/vi/G3lot5Fx4t4/hqdefault.jpg",
-    "viewCount": 132
+    "viewCount": 136
   },
   {
     "id": "O-EZoaPh3AQ",
@@ -51,7 +52,7 @@
     "publishedAt": "2026-06-14T16:00:08.000Z",
     "link": "https://www.youtube.com/watch?v=O-EZoaPh3AQ",
     "thumbnail": "https://i.ytimg.com/vi/O-EZoaPh3AQ/hqdefault.jpg",
-    "viewCount": 65
+    "viewCount": 74
   },
   {
     "id": "hMSLfQXZGS8",
@@ -61,7 +62,8 @@
     "type": "videos",
     "publishedAt": "2026-06-09T19:00:06.000Z",
     "link": "https://www.youtube.com/watch?v=hMSLfQXZGS8",
-    "thumbnail": "https://i.ytimg.com/vi/hMSLfQXZGS8/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/hMSLfQXZGS8/hqdefault.jpg",
+    "viewCount": 42000
   },
   {
     "id": "K5A_Yt5g4DA",
@@ -157,7 +159,7 @@
     "channelTitle": "SenseiTalon",
     "channelId": "UCg969guBVdvlhqzegxPS_tg",
     "type": "videos",
-    "publishedAt": "2026-03-21T19:11:28.801Z",
+    "publishedAt": "2026-03-22T19:14:43.244Z",
     "link": "https://www.youtube.com/watch?v=Iydo2FwMvOc",
     "thumbnail": "https://i.ytimg.com/vi/Iydo2FwMvOc/hqdefault.jpg",
     "viewCount": 105
@@ -236,8 +238,7 @@
     "type": "videos",
     "publishedAt": "2025-09-11T14:00:15.000Z",
     "link": "https://www.youtube.com/watch?v=66XWOe9g7e0",
-    "thumbnail": "https://i.ytimg.com/vi/66XWOe9g7e0/hqdefault.jpg",
-    "viewCount": 31
+    "thumbnail": "https://i.ytimg.com/vi/66XWOe9g7e0/hqdefault.jpg"
   },
   {
     "id": "CBpIaTKOKgY",
