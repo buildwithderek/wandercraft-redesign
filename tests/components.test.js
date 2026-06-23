@@ -1,5 +1,5 @@
-import { describe, test, expect } from 'vitest';
-import { creatorCardHTML } from '../js/components/creatorCard.js';
+import { describe, test, expect, vi, afterEach } from 'vitest';
+import { creatorCardHTML, setupSkinLoaders } from '../js/components/creatorCard.js';
 import { contentCardHTML } from '../js/components/contentCard.js';
 import { fanArtItemHTML } from '../js/components/fanartItem.js';
 import { merchCardHTML } from '../js/components/merchCard.js';
@@ -48,10 +48,12 @@ describe('creatorCardHTML (playwandercraft layout)', () => {
     expect(img.getAttribute('src')).toContain('SenseiTalon');
   });
 
-  test('image has a fallback URL wired via onerror', () => {
+  test('image has an ordered fallback chain (minotar before mc-heads)', () => {
     const frag = parse(creatorCardHTML(creator));
     const img = frag.querySelector('img');
-    expect(img.getAttribute('onerror')).toContain('mc-heads.net');
+    const chain = img.getAttribute('data-fallbacks').split('|');
+    expect(chain[0]).toContain('minotar.net');
+    expect(chain[1]).toContain('mc-heads.net');
   });
 
   test('image uses lazy loading', () => {
@@ -75,6 +77,67 @@ describe('creatorCardHTML (playwandercraft layout)', () => {
   test('exposes data-creator for DOM lookups by id', () => {
     const frag = parse(creatorCardHTML(creator));
     expect(frag.querySelector('.creator-v2-card').dataset.creator).toBe('senseitalon');
+  });
+});
+
+describe('setupSkinLoaders stall timeout', () => {
+  // Immediately-intersecting observer so the stall clock arms on observe().
+  class ImmediateIO {
+    constructor(cb) { this.cb = cb; }
+    observe(el) { this.cb([{ isIntersecting: true, target: el }], this); }
+    unobserve() {}
+    disconnect() {}
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+    document.body.innerHTML = '';
+  });
+
+  function mountStalledSkin() {
+    document.body.innerHTML = `
+      <div class="creator-v2-image">
+        <div class="skin-skeleton"></div>
+        <img class="creator-skin"
+             src="https://starlightskins.lunareclipse.studio/skin-render/walking/Foo/full?width=600"
+             data-default="https://starlightskins.lunareclipse.studio/skin-render/walking/Foo/full?width=600"
+             data-fallbacks="https://minotar.net/body/Foo/300.png|https://mc-heads.net/body/Foo/right">
+      </div>`;
+    const img = document.querySelector('.creator-skin');
+    // Force the "in flight" branch: request issued, nothing resolved yet.
+    Object.defineProperty(img, 'complete', { value: false, configurable: true });
+    return img;
+  }
+
+  test('falls back to the next renderer if the primary stalls for 10s', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('IntersectionObserver', ImmediateIO);
+    const img = mountStalledSkin();
+
+    const teardown = setupSkinLoaders(document);
+    expect(img.getAttribute('src')).toContain('starlightskins'); // still on primary
+
+    vi.advanceTimersByTime(9999);
+    expect(img.getAttribute('src')).toContain('starlightskins'); // not yet
+
+    vi.advanceTimersByTime(1);
+    expect(img.getAttribute('src')).toContain('minotar.net');    // stalled → backup
+    teardown();
+  });
+
+  test('a successful load cancels the stall timer (no fallback swap)', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('IntersectionObserver', ImmediateIO);
+    const img = mountStalledSkin();
+
+    const teardown = setupSkinLoaders(document);
+    img.dispatchEvent(new Event('load'));   // primary resolves before 10s
+    vi.advanceTimersByTime(10000);
+
+    expect(img.getAttribute('src')).toContain('starlightskins'); // stayed on primary
+    expect(img.classList.contains('skin-loaded')).toBe(true);
+    teardown();
   });
 });
 

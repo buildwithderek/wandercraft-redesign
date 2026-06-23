@@ -4,7 +4,7 @@
     {
       "name": "wandercraft",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "https.server", "5173"],
+      "runtimeArgs": ["-m", "http.server", "5173"],
       "port": 5173
     }
   ]

@@ -12,7 +12,7 @@
  * rendering the grid.
  */
 
-import { fullBodySkinUrl, fullBodyFallbackUrl } from '../utils/skinUrls.js';
+import { fullBodySkinUrl, skinFallbackChain } from '../utils/skinUrls.js';
 import { ROLE_VARIANTS } from '../data/creators.js';
 import {
   twitchUrlFor,
@@ -160,12 +160,18 @@ export function initializeSkinHoverEffects(root = document) {
   const skins = root.querySelectorAll('.creator-skin');
 
   skins.forEach((skin) => {
-    const defaultSrc = skin.dataset.default;
-    const hoverSrc   = skin.dataset.hover;
-    if (!defaultSrc || !hoverSrc) return;
-
-    skin.addEventListener('mouseenter', () => { skin.src = hoverSrc; });
-    skin.addEventListener('mouseleave', () => { skin.src = defaultSrc; });
+    // Read default/hover from the dataset LIVE on each event rather than
+    // capturing them now. setupSkinLoaders may repoint these to a working
+    // fallback after a primary (Starlight) outage; reading live means hover
+    // follows that repoint instead of swapping back to a dead URL and
+    // blanking the card. When the primary is down, default === hover, so the
+    // swap is simply a harmless no-op.
+    skin.addEventListener('mouseenter', () => {
+      if (skin.dataset.hover) skin.src = skin.dataset.hover;
+    });
+    skin.addEventListener('mouseleave', () => {
+      if (skin.dataset.default) skin.src = skin.dataset.default;
+    });
   });
 }
 
@@ -178,8 +184,24 @@ export const intializeSkinHoverEffects = initializeSkinHoverEffects;
  *   skeleton  : instant, blocky Minecraft shimmer (always renders)
  *   loading   : skeleton stays visible while the <img> fetches
  *   loaded    : .skin-loaded class fades the image in over the skeleton
- *   failed    : swap to mc-heads.net fallback once; if THAT 404s, give up
- *               (data-failed guard prevents recursion)
+ *   failed    : walk the fallback chain (minotar → mc-heads) one renderer at
+ *               a time; if every link fails, give up and reveal whatever's
+ *               there (the nextFallback index prevents re-trying a dead URL)
+ *
+ * A renderer counts as failed in two ways: it fires an `error` (e.g. a 502),
+ * OR it simply never resolves within STALL_MS (a hung/very slow request). The
+ * stall timeout is what guarantees a card never sits shimmering forever behind
+ * a primary that's accepting the connection but never returning the image.
+ *
+ * The stall clock starts when the card nears the viewport, NOT at page load:
+ * the images are loading="lazy", so an off-screen card hasn't requested the
+ * primary yet — arming the timer early would bump it to the fallback before
+ * Starlight was ever tried, even while Starlight is perfectly up.
+ *
+ * The fallback chain matters because the primary renderer (Starlight) has
+ * outright outages, and the historical single fallback (mc-heads) can itself
+ * serve an empty 200. Trying minotar before mc-heads keeps the grid populated
+ * even when two of the three services are misbehaving.
  *
  * Why this is its own function (not part of initializeSkinHoverEffects):
  * the two concerns are independent. Loading happens once per page; hover
@@ -189,13 +211,53 @@ export const intializeSkinHoverEffects = initializeSkinHoverEffects;
  * Returns a teardown via AbortController so listeners don't linger
  * after grid re-renders.
  */
+/** Force the fallback if the current renderer hasn't resolved in this long. */
+const STALL_MS = 10000;
+
 export function setupSkinLoaders(root = document) {
   const skins = root.querySelectorAll('.creator-skin');
   const controller = new AbortController();
   const { signal } = controller;
 
+  // One observer for the whole grid: it starts each card's stall clock the
+  // moment the card nears the viewport (≈ when the lazy <img> actually fires
+  // its request). Maps element → its arm() so the shared callback can reach
+  // the right per-card closure. When IntersectionObserver is unavailable we
+  // arm immediately at setup instead.
+  const armers = new WeakMap();
+  const observer = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          obs.unobserve(entry.target);
+          armers.get(entry.target)?.();
+        }
+      }, { rootMargin: '200px' })
+    : null;
+
   skins.forEach((skin) => {
-    const fallbackUrl = skin.dataset.fallback;
+    // Ordered fallback renderers to try if the primary fails. Pipe-separated
+    // because usernames are alphanumeric/underscore, so '|' never collides.
+    const fallbacks = (skin.dataset.fallbacks || '')
+      .split('|')
+      .map((u) => u.trim())
+      .filter(Boolean);
+    let nextFallback = 0;
+
+    // Timer that fires markFailed() if the current renderer stalls. Re-armed
+    // for each link in the chain so every renderer gets its own 10s window.
+    let stallTimer = null;
+    const clearStall = () => {
+      if (stallTimer !== null) {
+        clearTimeout(stallTimer);
+        stallTimer = null;
+      }
+    };
+    const armStall = () => {
+      if (initialResolved) return;
+      clearStall();
+      stallTimer = setTimeout(() => markFailed(), STALL_MS);
+    };
 
     // The loader is concerned with the INITIAL render only. Once the first
     // load resolves (success or fallback), this flag flips and subsequent
@@ -206,6 +268,16 @@ export function setupSkinLoaders(root = document) {
 
     const markLoaded = () => {
       initialResolved = true;
+      clearStall();
+      // If we settled on a fallback renderer (the primary was down), repoint
+      // the hover dataset at the URL that actually loaded. Otherwise the very
+      // first hover would swap `src` back to the broken primary and blank the
+      // card. Pose-on-hover is sacrificed when the primary is down — a fair
+      // trade for a card that keeps showing a real skin.
+      if (skin.dataset.default && skin.src !== skin.dataset.default) {
+        skin.dataset.default = skin.src;
+        skin.dataset.hover = skin.src;
+      }
       skin.classList.add('skin-loaded');
       const skeleton = skin.previousElementSibling;
       if (skeleton && skeleton.classList.contains('skin-skeleton')) {
@@ -218,21 +290,24 @@ export function setupSkinLoaders(root = document) {
       // them bubble harmlessly — mouseleave restores the default URL.
       if (initialResolved) return;
 
-      if (skin.dataset.failed === 'true') {
-        // Fallback URL also failed. Accept defeat, reveal whatever's
-        // there so the card has something rather than an infinite shimmer.
-        initialResolved = true;
-        skin.classList.add('skin-loaded', 'skin-failed');
-        return;
+      clearStall();
+
+      // Advance through the fallback chain, skipping any URL we're already on.
+      // The next `load`/`error`/stall drives the following step; re-arm the
+      // timer so this fallback also gets its own 10s window.
+      while (nextFallback < fallbacks.length) {
+        const url = fallbacks[nextFallback++];
+        if (url && skin.src !== url) {
+          skin.src = url;
+          armStall();
+          return;
+        }
       }
-      skin.dataset.failed = 'true';
-      if (fallbackUrl && skin.src !== fallbackUrl) {
-        // Swap to mc-heads. The next `load` event will fire markLoaded;
-        // if THAT also errors, the data-failed branch above closes things out.
-        skin.src = fallbackUrl;
-      } else {
-        markLoaded();
-      }
+
+      // Chain exhausted: accept defeat and reveal whatever's there so the
+      // card has something rather than an infinite shimmer.
+      initialResolved = true;
+      skin.classList.add('skin-loaded', 'skin-failed');
     };
 
     // Three states the image can be in when JS reaches it:
@@ -249,10 +324,24 @@ export function setupSkinLoaders(root = document) {
       // initialResolved guard inside markFailed handles all later cases.
       skin.addEventListener('load',  markLoaded, { signal, once: true });
       skin.addEventListener('error', markFailed, { signal });
+      // Clear any pending stall timer when the loaders are torn down.
+      signal.addEventListener('abort', clearStall, { once: true });
+      // Start the stall clock when the card nears the viewport (so lazy,
+      // off-screen cards aren't bumped to the fallback before they've even
+      // requested the primary). Without an observer, arm right away.
+      if (observer) {
+        armers.set(skin, armStall);
+        observer.observe(skin);
+      } else {
+        armStall();
+      }
     }
   });
 
-  return () => controller.abort();
+  return () => {
+    controller.abort();
+    observer?.disconnect();
+  };
 }
 
 export function creatorCardHTML(creator) {
@@ -270,7 +359,9 @@ export function creatorCardHTML(creator) {
     pose: resolveHoverPose(creator.emote),
     width: 600,
   });
-  const fallbackUrl = fullBodyFallbackUrl(creator.mcUsername);
+  // Ordered fallback renderers (minotar → mc-heads), tried in turn by
+  // setupSkinLoaders if the Starlight primary errors.
+  const fallbacks = skinFallbackChain(creator.mcUsername);
 
   // Build the per-platform pill row. Only platforms with a handle render.
   // Each pill has data-platform + data-live-for so modules/creators.js
@@ -289,7 +380,8 @@ export function creatorCardHTML(creator) {
           class="creator-skin"
           src="${skinUrl}"
           data-default="${skinUrl}"
-          data-fallback="${fallbackUrl}"
+          data-hover="${emoteSkin}"
+          data-fallbacks="${fallbacks.join('|')}"
           alt="${creator.name}'s Minecraft skin"
           loading="lazy">
 
@@ -302,5 +394,4 @@ export function creatorCardHTML(creator) {
       </div>
     </article>
   `;
-  console.log(emoteSkin)
 }

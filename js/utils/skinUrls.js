@@ -15,6 +15,7 @@
 // `/render/` happens to also respond for some poses but isn't the documented
 // path — sticking to `/skin-render/` makes failures rarer and more consistent.
 const STARLIGHT_BASE = 'https://starlightskins.lunareclipse.studio/skin-render';
+const MINOTAR_BASE   = 'https://minotar.net';
 const MC_HEADS_BASE  = 'https://mc-heads.net';
 
 /**
@@ -50,10 +51,36 @@ function normalizePose(pose) {
   return VALID_POSES.has(lower) ? lower : 'default';
 }
 
-/** Simple front-facing full body. Used as the <img> fallback if Starlight fails. */
+/**
+ * Front-facing full body from minotar.net. This is the PRIMARY fallback when
+ * Starlight is down: unlike mc-heads (which can return an empty 200 for a
+ * username), minotar reliably returns real PNG bytes for every IGN we've
+ * tested. `size` is the render width in px; pixelated rendering keeps it crisp.
+ */
+export function minotarBodyUrl(username, size = 300) {
+  if (!username) return '';
+  return `${MINOTAR_BASE}/body/${encodeURIComponent(username)}/${size}.png`;
+}
+
+/**
+ * Simple front-facing full body from mc-heads. Kept as the LAST-resort
+ * fallback. Note: mc-heads sometimes serves an empty 200 (0-byte PNG) for a
+ * username, which the browser treats as an undecodable image — that's why it
+ * sits behind minotar in the chain rather than in front of it.
+ */
 export function fullBodyFallbackUrl(username) {
   if (!username) return '';
   return `${MC_HEADS_BASE}/body/${encodeURIComponent(username)}/right`;
+}
+
+/**
+ * Ordered list of fallback renderers to try, in turn, when the primary
+ * Starlight render fails: minotar first (reliable), mc-heads last (best
+ * effort). setupSkinLoaders() walks this chain on successive <img> errors.
+ */
+export function skinFallbackChain(username) {
+  if (!username) return [];
+  return [minotarBodyUrl(username), fullBodyFallbackUrl(username)];
 }
 
 /** Head-only avatar — handy for compact UIs (footer credits, pin popups). */
