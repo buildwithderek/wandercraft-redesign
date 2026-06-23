@@ -6,8 +6,8 @@
  * creator is streaming (driven by liveStatus.js).
  *
  * The skin URL is auto-generated from the creator's Minecraft username via
- * starlightskins.lunareclipse.studio. On hover, the image swaps to an
- * "emote" pose (Cheering, Wave, etc.) — the swap is wired by
+ * nmsr.nickac.dev (a true 3D render). On hover, the image swaps to the
+ * isometric 3/4 angle of the same skin — the swap is wired by
  * initializeSkinHoverEffects(), which modules/creators.js calls after
  * rendering the grid.
  */
@@ -22,65 +22,6 @@ import {
   tiktokLiveUrlFor,
 } from '../data/links.js';
 import { SOCIAL_ICONS } from './icons.js';
-
-/**
- * Map of friendly emote names → real Starlightskins pose names.
- *
- * Verified against the official RenderTypes list:
- *   https://github.com/rinckodev/starlightskinapi (the official wrapper)
- *
- * Valid poses are: default, marching, walking, crouching, crossed,
- * crisscross, cheering, relaxing, trudging, cowering, pointing, lunging,
- * dungeons, facepalm, sleeping, dead, archer, mojavatar, ultimate,
- * isometric, head, bitzel, pixel, ornament.
- *
- * Names not in that list (Jump, Wave, Dance, Kick, Run...) are mapped to
- * the closest real pose so the URL never 404s. Anything unmapped falls
- * through to `cheering` — a recognizable, animated hover default.
- */
-const EMOTE_POSE_MAP = {
-  // Direct matches (already valid pose names)
-  cheering:    'cheering',
-  pointing:    'pointing',
-  crossed:     'crossed',
-  crisscross:  'crisscross',
-  walking:     'walking',
-  marching:    'marching',
-  trudging:    'trudging',
-  cowering:    'cowering',
-  crouching:   'crouching',
-  lunging:     'lunging',
-  facepalm:    'facepalm',
-  sleeping:    'sleeping',
-  archer:      'archer',
-  relaxing:    'relaxing',
-  ultimate:    'ultimate',
-  default:     'default',
-
-  // Friendly intent aliases → closest real pose
-  wave:        'cheering',    // raised arm
-  point:       'pointing',
-  crossedarms: 'crossed',
-  arms:        'crossed',
-  dance:       'crisscross',  // most "dance-like" of the real poses
-  dab:         'crisscross',
-  jump:        'lunging',     // forward-leap, mid-air feel
-  kick:        'lunging',
-  lunge:       'lunging',
-  relax:       'relaxing',
-  sleep:       'sleeping',
-  crouch:      'crouching',
-  walk:        'walking',
-  run:         'marching',    // no Running pose exists; Marching has motion
-  running:     'marching',
-  march:       'marching',
-  standing:    'default',
-};
-
-function resolveHoverPose(emote) {
-  if (!emote) return 'cheering';
-  return EMOTE_POSE_MAP[String(emote).toLowerCase()] || 'cheering';
-}
 
 /**
  * Per-platform pill row shown in the top-right of each card image.
@@ -162,10 +103,10 @@ export function initializeSkinHoverEffects(root = document) {
   skins.forEach((skin) => {
     // Read default/hover from the dataset LIVE on each event rather than
     // capturing them now. setupSkinLoaders may repoint these to a working
-    // fallback after a primary (Starlight) outage; reading live means hover
-    // follows that repoint instead of swapping back to a dead URL and
-    // blanking the card. When the primary is down, default === hover, so the
-    // swap is simply a harmless no-op.
+    // fallback after a 3D-render outage; reading live means hover follows
+    // that repoint instead of swapping back to a dead URL and blanking the
+    // card. When the 3D render is down, default === hover, so the swap is
+    // simply a harmless no-op.
     skin.addEventListener('mouseenter', () => {
       if (skin.dataset.hover) skin.src = skin.dataset.hover;
     });
@@ -195,13 +136,13 @@ export const intializeSkinHoverEffects = initializeSkinHoverEffects;
  *
  * The stall clock starts when the card nears the viewport, NOT at page load:
  * the images are loading="lazy", so an off-screen card hasn't requested the
- * primary yet — arming the timer early would bump it to the fallback before
- * Starlight was ever tried, even while Starlight is perfectly up.
+ * 3D render yet — arming the timer early would bump it to the flat 2D
+ * fallback before the 3D render was ever tried, even while it's perfectly up.
  *
- * The fallback chain matters because the primary renderer (Starlight) has
- * outright outages, and the historical single fallback (mc-heads) can itself
- * serve an empty 200. Trying minotar before mc-heads keeps the grid populated
- * even when two of the three services are misbehaving.
+ * The fallback chain matters because 3D-render services can have outright
+ * outages, and the simplest 2D fallback (mc-heads) can itself serve an empty
+ * 200. Trying minotar before mc-heads keeps the grid populated even when two
+ * of the services are misbehaving.
  *
  * Why this is its own function (not part of initializeSkinHoverEffects):
  * the two concerns are independent. Loading happens once per page; hover
@@ -346,21 +287,12 @@ export function setupSkinLoaders(root = document) {
 
 export function creatorCardHTML(creator) {
   const roleVariant = ROLE_VARIANTS[creator.role] || 'creative';
-  // `walking` is a real Starlightskins pose; `running` is not (it would
-  // silently fall back to default). See utils/skinUrls.js VALID_POSES.
-  const skinUrl = fullBodySkinUrl(creator.mcUsername, {
-    pose: 'walking',
-    width: 600,
-  });
-  // Per-creator hover pose. Falls back to 'cheering' when `emote` is missing,
-  // and maps friendly emote names (Wave, Jump, Dance) to real Starlightskins
-  // poses via EMOTE_POSE_MAP above.
-  const emoteSkin = fullBodySkinUrl(creator.mcUsername, {
-    pose: resolveHoverPose(creator.emote),
-    width: 600,
-  });
-  // Ordered fallback renderers (minotar → mc-heads), tried in turn by
-  // setupSkinLoaders if the Starlight primary errors.
+  // Primary 3D render: front-facing full body from NMSR.
+  const skinUrl = fullBodySkinUrl(creator.mcUsername, { mode: 'fullbody' });
+  // Hover render: the isometric 3/4 angle of the same 3D skin.
+  const hoverSkin = fullBodySkinUrl(creator.mcUsername, { mode: 'fullbodyiso' });
+  // Ordered flat-2D fallback renderers (minotar → mc-heads), tried in turn by
+  // setupSkinLoaders if the 3D render errors or stalls past the timeout.
   const fallbacks = skinFallbackChain(creator.mcUsername);
 
   // Build the per-platform pill row. Only platforms with a handle render.
@@ -380,7 +312,7 @@ export function creatorCardHTML(creator) {
           class="creator-skin"
           src="${skinUrl}"
           data-default="${skinUrl}"
-          data-hover="${emoteSkin}"
+          data-hover="${hoverSkin}"
           data-fallbacks="${fallbacks.join('|')}"
           alt="${creator.name}'s Minecraft skin"
           loading="lazy">

@@ -41,11 +41,17 @@ describe('creatorCardHTML (playwandercraft layout)', () => {
     expect(wanderer.querySelector('.creator-v2-role--creative')).toBeTruthy();
   });
 
-  test('embeds the Minecraft skin URL from starlightskins', () => {
+  test('embeds the 3D Minecraft skin render URL (NMSR) from the username', () => {
     const frag = parse(creatorCardHTML(creator));
     const img = frag.querySelector('img');
-    expect(img.getAttribute('src')).toContain('starlightskins.lunareclipse.studio');
+    expect(img.getAttribute('src')).toContain('nmsr.nickac.dev');
     expect(img.getAttribute('src')).toContain('SenseiTalon');
+  });
+
+  test('hover swaps to the isometric 3D angle of the same skin', () => {
+    const frag = parse(creatorCardHTML(creator));
+    const img = frag.querySelector('img');
+    expect(img.getAttribute('data-hover')).toContain('fullbodyiso');
   });
 
   test('image has an ordered fallback chain (minotar before mc-heads)', () => {
@@ -100,8 +106,8 @@ describe('setupSkinLoaders stall timeout', () => {
       <div class="creator-v2-image">
         <div class="skin-skeleton"></div>
         <img class="creator-skin"
-             src="https://starlightskins.lunareclipse.studio/skin-render/walking/Foo/full?width=600"
-             data-default="https://starlightskins.lunareclipse.studio/skin-render/walking/Foo/full?width=600"
+             src="https://nmsr.nickac.dev/fullbody/Foo"
+             data-default="https://nmsr.nickac.dev/fullbody/Foo"
              data-fallbacks="https://minotar.net/body/Foo/300.png|https://mc-heads.net/body/Foo/right">
       </div>`;
     const img = document.querySelector('.creator-skin');
@@ -110,19 +116,19 @@ describe('setupSkinLoaders stall timeout', () => {
     return img;
   }
 
-  test('falls back to the next renderer if the primary stalls for 10s', () => {
+  test('falls back to the 2D renderer if the 3D render stalls for 10s', () => {
     vi.useFakeTimers();
     vi.stubGlobal('IntersectionObserver', ImmediateIO);
     const img = mountStalledSkin();
 
     const teardown = setupSkinLoaders(document);
-    expect(img.getAttribute('src')).toContain('starlightskins'); // still on primary
+    expect(img.getAttribute('src')).toContain('nmsr.nickac.dev'); // still on 3D
 
     vi.advanceTimersByTime(9999);
-    expect(img.getAttribute('src')).toContain('starlightskins'); // not yet
+    expect(img.getAttribute('src')).toContain('nmsr.nickac.dev'); // not yet
 
     vi.advanceTimersByTime(1);
-    expect(img.getAttribute('src')).toContain('minotar.net');    // stalled → backup
+    expect(img.getAttribute('src')).toContain('minotar.net');     // stalled → 2D backup
     teardown();
   });
 
@@ -132,10 +138,10 @@ describe('setupSkinLoaders stall timeout', () => {
     const img = mountStalledSkin();
 
     const teardown = setupSkinLoaders(document);
-    img.dispatchEvent(new Event('load'));   // primary resolves before 10s
+    img.dispatchEvent(new Event('load'));   // 3D render resolves before 10s
     vi.advanceTimersByTime(10000);
 
-    expect(img.getAttribute('src')).toContain('starlightskins'); // stayed on primary
+    expect(img.getAttribute('src')).toContain('nmsr.nickac.dev'); // stayed on 3D
     expect(img.classList.contains('skin-loaded')).toBe(true);
     teardown();
   });

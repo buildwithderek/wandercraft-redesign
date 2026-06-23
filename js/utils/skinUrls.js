@@ -1,61 +1,43 @@
 /**
  * Minecraft skin renderer URLs.
  *
- * We use starlightskins.lunareclipse.studio for the big full-body hero render
- * (the "Walking" pose looks closest to playwandercraft's character shots).
- * mc-heads.net is the fallback — same idea, simpler renders, but it's the
- * most rock-solid free service if Starlight is down.
+ * The hero cards use a true 3D full-body render (nmsr.nickac.dev — NickAc's
+ * Minecraft Skin Renderer). It's fast, renders the second/overlay layer with
+ * real depth, accepts a plain username, and has been far more reliable than
+ * starlightskins.lunareclipse.studio (which had repeated multi-hour 502s).
  *
- * Both services accept a username. Skin updates the moment the player
- * updates it in-game — no asset pipeline required.
+ * If the 3D render doesn't come back in time, the loader falls back to a flat
+ * 2D body from minotar.net, then mc-heads.net. See skinFallbackChain() and
+ * setupSkinLoaders() in components/creatorCard.js.
+ *
+ * Everything keys off the username, so a skin updates the moment the player
+ * changes it in-game — no asset pipeline required.
  */
 
-// Documented endpoint per https://news.lunareclipse.studio/article/nr_starlight_skinapi
-// Example: https://starlightskins.lunareclipse.studio/skin-render/marching/Astra_plays/full
-// `/render/` happens to also respond for some poses but isn't the documented
-// path — sticking to `/skin-render/` makes failures rarer and more consistent.
-const STARLIGHT_BASE = 'https://starlightskins.lunareclipse.studio/skin-render';
+const NMSR_BASE      = 'https://nmsr.nickac.dev';
 const MINOTAR_BASE   = 'https://minotar.net';
 const MC_HEADS_BASE  = 'https://mc-heads.net';
 
 /**
- * Full-body render. `pose` must be a real Starlightskins render type
- * (see VALID_POSES below). Unknown poses fall back to "default" rather
- * than 404 because the API treats unknown paths as failures.
+ * 3D full-body render (the primary, "hero" look).
  *
- * `width` is the rendered pixel width — larger = sharper but slower.
+ * `mode` is an NMSR render type:
+ *   - 'fullbody'    front-facing 3D body (default card render)
+ *   - 'fullbodyiso' isometric 3/4 angle (used for the hover swap)
+ * See https://nmsr.nickac.dev for the full list. An unknown mode would 404,
+ * so callers should stick to the two above.
  */
-export function fullBodySkinUrl(username, { pose = 'default', width = 600 } = {}) {
+export function fullBodySkinUrl(username, { mode = 'fullbody' } = {}) {
   if (!username) return '';
-
-  const safePose = normalizePose(pose);
-
-  return `${STARLIGHT_BASE}/${safePose}/${encodeURIComponent(username)}/full?width=${width}`;
+  return `${NMSR_BASE}/${mode}/${encodeURIComponent(username)}`;
 }
 
 /**
- * Complete list of poses Starlightskins actually serves (lowercased).
- * Source: https://github.com/rinckodev/starlightskinapi README.
- * Updating this list when LES ships new poses is the only required change.
- */
-export const VALID_POSES = new Set([
-  'default', 'marching', 'walking', 'crouching', 'crossed', 'crisscross',
-  'cheering', 'relaxing', 'trudging', 'cowering', 'pointing', 'lunging',
-  'dungeons', 'facepalm', 'sleeping', 'dead', 'archer', 'mojavatar',
-  'ultimate', 'isometric', 'head', 'bitzel', 'pixel', 'ornament',
-]);
-
-/** Lower-case a pose name and fall back to "default" if it's not real. */
-function normalizePose(pose) {
-  const lower = String(pose || '').toLowerCase();
-  return VALID_POSES.has(lower) ? lower : 'default';
-}
-
-/**
- * Front-facing full body from minotar.net. This is the PRIMARY fallback when
- * Starlight is down: unlike mc-heads (which can return an empty 200 for a
- * username), minotar reliably returns real PNG bytes for every IGN we've
- * tested. `size` is the render width in px; pixelated rendering keeps it crisp.
+ * Front-facing flat 2D body from minotar.net. This is the FIRST fallback when
+ * the 3D render is slow or down: unlike mc-heads (which can return an empty
+ * 200 for a username), minotar reliably returns real PNG bytes for every IGN
+ * we've tested. `size` is the render width in px; pixelated rendering keeps it
+ * crisp.
  */
 export function minotarBodyUrl(username, size = 300) {
   if (!username) return '';
@@ -74,9 +56,9 @@ export function fullBodyFallbackUrl(username) {
 }
 
 /**
- * Ordered list of fallback renderers to try, in turn, when the primary
- * Starlight render fails: minotar first (reliable), mc-heads last (best
- * effort). setupSkinLoaders() walks this chain on successive <img> errors.
+ * Ordered list of flat 2D fallback renderers, tried in turn when the 3D
+ * render fails or stalls: minotar first (reliable), mc-heads last (best
+ * effort). setupSkinLoaders() walks this chain on each <img> error/timeout.
  */
 export function skinFallbackChain(username) {
   if (!username) return [];
