@@ -8,7 +8,7 @@
     "publishedAt": "2026-06-24T03:42:22.000Z",
     "link": "https://www.youtube.com/shorts/SMGPblsLxM4",
     "thumbnail": "https://i.ytimg.com/vi/SMGPblsLxM4/hqdefault.jpg",
-    "viewCount": 852
+    "viewCount": 855
   },
   {
     "id": "ZI6r9OG8mWM",
@@ -19,7 +19,7 @@
     "publishedAt": "2026-06-19T19:44:54.000Z",
     "link": "https://www.youtube.com/watch?v=ZI6r9OG8mWM",
     "thumbnail": "https://i.ytimg.com/vi/ZI6r9OG8mWM/hqdefault.jpg",
-    "viewCount": 9800
+    "viewCount": 11000
   },
   {
     "id": "45BlLKAhY9U",
@@ -40,7 +40,8 @@
     "type": "streams",
     "publishedAt": "2026-06-16T08:33:42.000Z",
     "link": "https://www.youtube.com/watch?v=G3lot5Fx4t4",
-    "thumbnail": "https://i.ytimg.com/vi/G3lot5Fx4t4/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/G3lot5Fx4t4/hqdefault.jpg",
+    "viewCount": 142
   },
   {
     "id": "O-EZoaPh3AQ",
@@ -51,7 +52,7 @@
     "publishedAt": "2026-06-14T16:00:08.000Z",
     "link": "https://www.youtube.com/watch?v=O-EZoaPh3AQ",
     "thumbnail": "https://i.ytimg.com/vi/O-EZoaPh3AQ/hqdefault.jpg",
-    "viewCount": 103
+    "viewCount": 110
   },
   {
     "id": "hMSLfQXZGS8",
@@ -61,7 +62,8 @@
     "type": "videos",
     "publishedAt": "2026-06-09T19:00:06.000Z",
     "link": "https://www.youtube.com/watch?v=hMSLfQXZGS8",
-    "thumbnail": "https://i.ytimg.com/vi/hMSLfQXZGS8/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/hMSLfQXZGS8/hqdefault.jpg",
+    "viewCount": 51000
   },
   {
     "id": "K5A_Yt5g4DA",
@@ -148,7 +150,8 @@
     "type": "videos",
     "publishedAt": "2026-04-07T16:20:44.000Z",
     "link": "https://www.youtube.com/watch?v=hobZz9tKlmk",
-    "thumbnail": "https://i.ytimg.com/vi/hobZz9tKlmk/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/hobZz9tKlmk/hqdefault.jpg",
+    "viewCount": 70
   },
   {
     "id": "Iydo2FwMvOc",
@@ -156,7 +159,7 @@
     "channelTitle": "SenseiTalon",
     "channelId": "UCg969guBVdvlhqzegxPS_tg",
     "type": "videos",
-    "publishedAt": "2026-03-25T18:42:27.635Z",
+    "publishedAt": "2026-03-26T18:44:10.814Z",
     "link": "https://www.youtube.com/watch?v=Iydo2FwMvOc",
     "thumbnail": "https://i.ytimg.com/vi/Iydo2FwMvOc/hqdefault.jpg",
     "viewCount": 105
@@ -169,7 +172,8 @@
     "type": "videos",
     "publishedAt": "2026-02-10T01:08:24.000Z",
     "link": "https://www.youtube.com/watch?v=MuXrfBlv7CM",
-    "thumbnail": "https://i.ytimg.com/vi/MuXrfBlv7CM/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/MuXrfBlv7CM/hqdefault.jpg",
+    "viewCount": 299
   },
   {
     "id": "jyNL_tV2Jw8",
@@ -190,8 +194,7 @@
     "type": "videos",
     "publishedAt": "2026-01-24T21:00:48.000Z",
     "link": "https://www.youtube.com/watch?v=eqnsOMNYthw",
-    "thumbnail": "https://i.ytimg.com/vi/eqnsOMNYthw/hqdefault.jpg",
-    "viewCount": 282
+    "thumbnail": "https://i.ytimg.com/vi/eqnsOMNYthw/hqdefault.jpg"
   },
   {
     "id": "ujxSeL7abkM",
@@ -234,7 +237,8 @@
     "type": "videos",
     "publishedAt": "2025-09-11T14:00:15.000Z",
     "link": "https://www.youtube.com/watch?v=66XWOe9g7e0",
-    "thumbnail": "https://i.ytimg.com/vi/66XWOe9g7e0/hqdefault.jpg"
+    "thumbnail": "https://i.ytimg.com/vi/66XWOe9g7e0/hqdefault.jpg",
+    "viewCount": 31
   },
   {
     "id": "CBpIaTKOKgY",
@@ -244,7 +248,6 @@
     "type": "videos",
     "publishedAt": "2022-06-26T11:23:52.000Z",
     "link": "https://www.youtube.com/watch?v=CBpIaTKOKgY",
-    "thumbnail": "https://i.ytimg.com/vi/CBpIaTKOKgY/hqdefault.jpg",
-    "viewCount": 1800
+    "thumbnail": "https://i.ytimg.com/vi/CBpIaTKOKgY/hqdefault.jpg"
   }
 ]
