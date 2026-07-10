@@ -47,7 +47,7 @@ export const mailto = (subject) =>
 const ytSearch = (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 
 /** Official WanderCraft Discord invite. Also used by the Fan Art "Upload Art" CTA. */
-export const DISCORD_INVITE = 'discord.gg/playwandercraft';
+export const DISCORD_INVITE = 'https://discord.gg/ytzqWjYAp';
 
 /** Brand-level community links. Replace with real URLs when available. */
 export const COMMUNITY_LINKS = {
